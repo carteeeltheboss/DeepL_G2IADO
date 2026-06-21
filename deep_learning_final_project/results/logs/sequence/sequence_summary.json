@@ -1,0 +1,43 @@
+{
+  "language_models": [
+    {
+      "modele": "RNN",
+      "loss_test": 2.624763104228578,
+      "perplexite_test": 13.801304328139183
+    },
+    {
+      "modele": "LSTM",
+      "loss_test": 2.588523595721519,
+      "perplexite_test": 13.310105992138004
+    },
+    {
+      "modele": "GRU",
+      "loss_test": 2.5805072329053376,
+      "perplexite_test": 13.203833880390603
+    }
+  ],
+  "gradient_clipping": [
+    {
+      "experience": "avec_clipping",
+      "clip_value": 1.0,
+      "perplexite_test": 12.698408793958391,
+      "norme_gradient_moyenne": 0.5653812284866968
+    },
+    {
+      "experience": "sans_clipping",
+      "clip_value": 1000000.0,
+      "perplexite_test": 12.972884887760172,
+      "norme_gradient_moyenne": 0.5702322888374327
+    }
+  ],
+  "seq2seq_bleu": [
+    {
+      "decodeur": "Greedy",
+      "bleu": 0.14752848428668028
+    },
+    {
+      "decodeur": "Beam search",
+      "bleu": 0.16501163517654366
+    }
+  ]
+}

@@ -1,0 +1,318 @@
+\documentclass[a4paper,11pt,oneside]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{listings}
+\usepackage[french]{babel}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{a4paper, top=2.2cm, bottom=2.5cm, left=2.4cm, right=2.4cm, headsep=0.7cm}
+\usepackage{amsmath,amssymb}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage[most]{tcolorbox}
+\usepackage{pgfgantt}
+\usepackage{pgf-umlsd}
+\usepackage{float}
+\usepackage[numbers]{natbib}
+\usepackage{longtable}
+
+\newenvironment{fquote}
+  {\begin{quote}\itshape}
+  {\end{quote}}
+
+\newcommand{\mychapter}[2]{%
+  \clearpage
+  \chapter*{#2}%
+  \markboth{#2}{#2}%
+  \addcontentsline{toc}{chapter}{#2}%
+  \vspace{-0.35em}
+}
+
+\usepackage{wrapfig}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric,calc,arrows.meta,positioning,fit}
+\usepackage{adjustbox}
+\usepackage{xparse}
+\usepackage{hyperref}
+\hfuzz=3pt
+
+\definecolor{Primary}{HTML}{1F3864}
+\definecolor{Secondary}{HTML}{2E74B5}
+\definecolor{Accent}{HTML}{ED7D31}
+\definecolor{Alert}{HTML}{C00000}
+\definecolor{SoftBg}{HTML}{F7FAFC}
+\definecolor{TableHeader}{HTML}{2E74B5}
+\definecolor{TableAlt}{HTML}{D9E2F3}
+\definecolor{NoteBg}{HTML}{FFF2CC}
+\definecolor{NoteBorder}{HTML}{BF8F00}
+
+\newcommand{\tblhead}[1]{\textcolor{white}{\textbf{#1}}}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=Primary,
+  citecolor=Primary,
+  urlcolor=Primary,
+  hypertexnames=false,
+  pdftitle={Conception, implémentation et analyse critique de modèles de deep learning pour la détection de la dépression, la classification d'images et la traduction automatique},
+  pdfauthor={KAFIF Imane}
+}
+\urlstyle{same}
+\raggedbottom
+\setstretch{1.08}
+\setcounter{tocdepth}{1}
+\setcounter{secnumdepth}{0}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{1.1em}
+\setlength{\headheight}{14pt}
+\emergencystretch=1em
+
+\setlist[itemize]{topsep=0.35em,itemsep=0.2em,leftmargin=1.6em}
+\setlist[enumerate]{topsep=0.35em,itemsep=0.2em,leftmargin=1.8em}
+
+\titleformat{name=\chapter,numberless}[display]
+  {\normalfont\huge\bfseries\color{Primary}}
+  {}
+  {0pt}
+  {}
+  [\vspace{0.45em}\color{Primary}\titlerule]
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{Primary}}
+  {}
+  {0pt}
+  {}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{Secondary}}
+  {}
+  {0pt}
+  {}
+\titlespacing*{\chapter}{0pt}{0pt}{1.0em}
+\titlespacing*{\section}{0pt}{1.1em}{0.5em}
+\titlespacing*{\subsection}{0pt}{0.9em}{0.35em}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\nouppercase{\leftmark}}
+\fancyhead[R]{\nouppercase{\rightmark}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\color{Primary}\hrule height\headrulewidth}
+\renewcommand{\footrulewidth}{0pt}
+
+\captionsetup{
+  font=small,
+  labelfont=bf,
+  labelsep=period,
+  skip=6pt
+}
+
+\newtcolorbox{block}[2][]{%
+  enhanced,
+  breakable,
+  colback=Primary!4!white,
+  colframe=Primary!50!black,
+  colbacktitle=Primary!10!white,
+  coltitle=black,
+  fonttitle=\bfseries,
+  sharp corners,
+  boxrule=0.6pt,
+  left=6pt,right=6pt,top=5pt,bottom=5pt,
+  before skip=7pt,after skip=7pt,
+  title={#2},
+  #1
+}
+\newtcolorbox{alertblock}[2][]{%
+  enhanced,
+  breakable,
+  colback=Alert!4!white,
+  colframe=Alert!60!black,
+  colbacktitle=Alert!10!white,
+  coltitle=black,
+  fonttitle=\bfseries,
+  sharp corners,
+  boxrule=0.6pt,
+  left=6pt,right=6pt,top=5pt,bottom=5pt,
+  before skip=7pt,after skip=7pt,
+  title={#2},
+  #1
+}
+
+\newcommand{\slidepurpose}[2]{%
+\begin{tcolorbox}[
+  enhanced,
+  boxrule=0.4pt,
+  sharp corners,
+  colback=SoftBg,
+  colframe=Primary!25,
+  left=5pt,right=5pt,top=3pt,bottom=3pt,
+  before skip=3pt,after skip=8pt
+]
+\footnotesize\textbf{Rôle :} #1 \hfill \textbf{Étape du projet :} #2
+\end{tcolorbox}
+}
+
+\newcommand{\defitem}[2]{\textbf{#1} : #2\par\vspace{0.32em}}
+
+\newcommand{\solutionfigure}[2]{%
+\begin{center}
+\includegraphics[width=0.96\linewidth,height=0.52\textheight,keepaspectratio]{#1}
+\captionsetup{type=figure}
+\captionof{figure}{#2}
+\end{center}
+}
+
+\newcommand{\tikzsolutionfigure}[2]{%
+\begin{center}
+\begin{adjustbox}{max width=0.96\linewidth, max totalheight=0.52\textheight}
+#1
+\end{adjustbox}
+\captionsetup{type=figure}
+\captionof{figure}{#2}
+\end{center}
+}
+
+\newif\ifreportfirstcolumn
+\NewDocumentEnvironment{columns}{ O{} }{%
+\par\medskip\noindent\reportfirstcolumntrue\ignorespaces
+}{%
+\par\medskip
+}
+
+\NewDocumentEnvironment{column}{ m }{%
+  \ifreportfirstcolumn\reportfirstcolumnfalse\else\hfill\fi
+  \begin{minipage}[t]{#1}\vspace{0pt}\raggedright
+}{%
+\end{minipage}\ignorespacesafterend
+}
+
+\RenewDocumentEnvironment{frame}{ O{} m }{%
+\Needspace{8\baselineskip}%
+\subsection{#2}
+\noindent
+}{%
+\par\vspace{0.45cm}
+}
+
+\newcommand{\resultspath}{../results}
+\newcommand{\safegraphic}[2][]{%
+    \IfFileExists{#2}{\includegraphics[#1]{#2}}{%
+        \fbox{\parbox[c][5cm][c]{0.85\linewidth}{\centering Figure non disponible.\\Relancer les expériences pour générer \texttt{#2}.}}%
+    }%
+}
+\newcommand{\safetableinput}[1]{%
+    \IfFileExists{#1}{\input{#1}}{%
+        \textit{Tableau à remplacer après exécution du pipeline. Fichier attendu : \texttt{#1}.}%
+    }%
+}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+{\small Royaume du Maroc}\\
+{\small HONORIS UNITED UNIVERSITIES}\par
+\vspace{0.3cm}
+\color{Primary}\rule{\linewidth}{1pt}\color{black}\par
+\vspace{0.5cm}
+
+\begin{minipage}{5cm}
+\centering
+\safegraphic[width=5cm]{logo.png}
+\end{minipage}\hfill
+\begin{minipage}{10cm}
+\raggedleft
+{\small \'Ecole Marocaine Des Sciences de L'Ing\'enieur}\\[0.1cm]
+{\small D\'epartement Informatique}
+\end{minipage}
+
+\vspace{2cm}
+{\large\bfseries Projet de fin de module}\\[0.3cm]
+{\large Module : \textbf{Deep Learning}}\\[0.3cm]
+{\large\bfseries Fili\`ere : 4IADO G2}\\[0.15cm]
+{\normalsize P\'eriode : ann\'ee universitaire 2025--2026}
+
+\vspace{1cm}
+\color{Primary}\rule{\linewidth}{1pt}\color{black}\par
+\vspace{0.6cm}
+{\color{Primary}\LARGE\bfseries Conception, impl\'ementation et analyse\\critique de mod\`eles de deep learning\\pour la d\'etection de la d\'epression,\\la classification d'images et la traduction automatique}\par
+\vspace{0.5cm}
+{\large\itshape\color{Accent} MLP \;\textbullet\; CNN \;\textbullet\; RNN \;\textbullet\; LSTM \;\textbullet\; GRU \;\textbullet\; Seq2Seq}\par
+\vspace{0.6cm}
+\color{Primary}\rule{\linewidth}{1pt}\color{black}\par
+
+\vspace{1.5cm}
+\noindent
+\begin{minipage}{0.5\textwidth}
+\raggedright\large
+\emph{R\'ealis\'e par :}\\
+Mme KAFIF Imane
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+\raggedleft\large
+\emph{Ma\^itre p\'edagogique :}\\
+Dr. HIDILA Zineb
+\end{minipage}
+
+\vfill
+{\large EMSI Casablanca}
+\end{titlepage}
+
+\pagenumbering{roman}
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+\thispagestyle{empty}
+
+\vspace{1cm}
+
+Je tiens à exprimer ma profonde gratitude à toutes les personnes qui ont contribué, de près ou de loin, à la réalisation de ce projet. \\[0.5cm]
+
+Je remercie tout particulièrement \textbf{Dr. HIDILA Zineb} pour son encadrement, ses conseils avisés et son soutien tout au long de cette aventure.
+
+Je souhaite également remercier \textbf{l'EMSI Casablanca} pour l'accompagnement pédagogique, l'environnement de travail et les ressources mises à disposition durant ce projet.
+
+Enfin, une pensée sincère à ma famille et à mes proches pour leur soutien moral et leurs encouragements constants.
+
+\vfill
+
+\begin{flushright}
+    \textit{KAFIF Imane}\\
+    \textit{2025/2026}
+\end{flushright}
+
+\clearpage
+\chapter*{Résumé}
+Ce projet propose une étude expérimentale et critique de plusieurs architectures de deep learning appliquées à trois cas d'usage distincts. La première partie s'intéresse aux données tabulaires avec la détection de la dépression (Depression Professional Dataset) en comparant des modèles MLP selon leurs stratégies d'initialisation (Xavier, Gaussienne, Constante). La deuxième partie aborde la vision par ordinateur en implémentant des opérations de convolution manuellement, puis en construisant une architecture CNN de type LeNet-5 et une variante paramétrable pour l'étude d'ablation sur le jeu de données CIFAR-10. Enfin, la troisième partie explore la modélisation de séquences avec une comparaison structurelle (RNN, LSTM, GRU) et l'implémentation d'un système Seq2Seq pour la traduction automatique de l'anglais vers le français, évalué à l'aide de la perplexité et du score BLEU. Ce rapport met en évidence l'importance du choix architectural, des hyperparamètres et des méthodes de décodage (Greedy vs Beam Search) pour optimiser les performances des modèles selon la nature des données.
+
+\chapter*{Mots-clés}
+Deep learning, PyTorch, MLP, CNN, RNN, LSTM, GRU, Seq2Seq, détection de la dépression, CIFAR-10, traduction automatique, score BLEU, étude d'ablation.
+
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\input{sections/introduction}
+\input{sections/partie1_mlp}
+\input{sections/partie2_cnn}
+\input{sections/partie3_sequences}
+\input{sections/discussion_transversale}
+\input{sections/limites}
+\input{sections/conclusion}
+
+\appendix
+\input{sections/annexes}
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}

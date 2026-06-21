@@ -1,0 +1,8 @@
+=== named_parameters() ===
+0.weight: shape=(64, 30), n=1920
+0.bias: shape=(64,), n=64
+3.weight: shape=(32, 64), n=2048
+3.bias: shape=(32,), n=32
+6.weight: shape=(2, 32), n=64
+6.bias: shape=(2,), n=2
+Paramètres entraînables : 4130

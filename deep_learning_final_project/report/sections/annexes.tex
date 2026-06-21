@@ -1,0 +1,35 @@
+\chapter{Annexes expérimentales}
+
+\section{Commandes principales}
+\begin{verbatim}
+pip install -r requirements.txt
+python run_notebooks.py
+python run_notebooks.py --notebook 01_mlp_tabular.ipynb
+python run_notebooks.py --notebook 02_cnn_images.ipynb
+python run_notebooks.py --notebook 03_rnn_seq2seq.ipynb
+\end{verbatim}
+Les notebooks sont aussi exécutables individuellement depuis le dossier \texttt{notebooks/}.
+
+\section{Organisation des sorties}
+\begin{itemize}[leftmargin=1.2cm]
+    \item \texttt{results/figures/mlp} : courbes, matrices de confusion et comparaison F1.
+    \item \texttt{results/figures/cnn} : exemples d’images, courbes, matrices de confusion, cartes de caractéristiques.
+    \item \texttt{results/figures/sequence} : courbes LM et Seq2Seq, comparaison de perplexité, effet du clipping.
+    \item \texttt{results/tables} : export CSV et LaTeX des métriques.
+    \item \texttt{results/saved\_models} : meilleurs poids sauvegardés.
+\end{itemize}
+
+\section{Choix d’implémentation}
+Les choix suivants ont été appliqués dans tout le projet :
+\begin{itemize}[leftmargin=1.2cm]
+    \item graine aléatoire fixée ;
+    \item détection automatique CPU/GPU ;
+    \item création automatique des dossiers de sortie ;
+    \item séparation stricte entraînement / validation / test ;
+    \item sauvegarde des meilleurs modèles ;
+    \item export des tableaux aux formats CSV et LaTeX.
+\end{itemize}
+
+\section{Remarque sur la reproductibilité}
+Les résultats dépendent de l’environnement d’exécution, du budget de calcul disponible et des versions installées. Le dépôt inclut une configuration raisonnable pour obtenir des sorties reproductibles sur machine standard. En cas de relance avec d’autres hyperparamètres, les tableaux et figures du rapport peuvent être régénérés automatiquement.
+

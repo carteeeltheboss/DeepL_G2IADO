@@ -1,0 +1,31 @@
+\chapter{Introduction générale}
+
+\section{Contexte}
+Le deep learning a profondément transformé la manière de modéliser des données complexes en apprenant automatiquement des représentations internes pertinentes \citep{goodfellow2016deep}. Cependant, cette efficacité apparente ne signifie pas qu’une architecture unique convienne à toutes les situations. Une table numérique de variables médicales, une image structurée sur une grille spatiale et une phrase ordonnée dans le temps n’imposent ni les mêmes biais inductifs, ni les mêmes contraintes de calcul, ni les mêmes mécanismes de généralisation.
+
+\section{Problématique}
+La question centrale de ce projet est donc la suivante : \emph{comment choisir et justifier une architecture de deep learning en fonction de la structure des données étudiées ?} Pour y répondre, trois familles de modèles ont été développées et comparées dans un même cadre expérimental :
+\begin{itemize}[leftmargin=1.2cm]
+    \item les MLP pour une tâche de classification tabulaire ;
+    \item les CNN pour une tâche de classification d’images ;
+    \item les architectures récurrentes puis un schéma encodeur--décodeur pour des séquences textuelles.
+\end{itemize}
+
+\section{Objectifs du projet}
+Les objectifs sont doubles. Le premier est \textbf{ingénierie} : produire un code PyTorch propre, modulaire, reproductible et facile à exécuter. Le second est \textbf{scientifique} : comparer les performances, interpréter les résultats et discuter les limites réelles des modèles. Le projet vise donc autant la maîtrise de l’implémentation que la qualité de l’analyse critique.
+
+\section{Méthodologie générale}
+La méthodologie suivie est identique dans les trois parties :
+\begin{enumerate}
+    \item choix d’un jeu de données réel et suffisamment léger ;
+    \item prétraitement rigoureux et séparation apprentissage / validation / test ;
+    \item implémentation des architectures en PyTorch ;
+    \item entraînement reproductible avec sauvegarde des résultats ;
+    \item évaluation par des métriques adaptées ;
+    \item visualisation et interprétation ;
+    \item synthèse critique répondant à la question scientifique posée.
+\end{enumerate}
+
+\section{Organisation du rapport}
+La Partie I traite les MLP sur données tabulaires. La Partie II traite les CNN sur images, avec calculs manuels et visualisation des cartes de caractéristiques. La Partie III traite la modélisation séquentielle avec RNN, LSTM, GRU et Seq2Seq. Enfin, une discussion transversale compare les architectures à travers la géométrie des données, avant de conclure sur les limites du travail et les prolongements possibles.
+

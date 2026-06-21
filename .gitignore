@@ -1,0 +1,72 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+*.env
+.env
+pyvenv.cfg
+
+# Jupyter
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+
+# Logs and runtime files
+*.log
+*.out
+*.err
+
+# LaTeX intermediate files
+*.aux
+*.bbl
+*.blg
+*.toc
+*.synctex.gz
+*.fdb_latexmk
+*.fls
+*.log
+
+# VS Code and editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Python testing and packaging
+.pytest_cache/
+.coverage
+.coverage.*
+.tox/
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Notebook checkpoints and temp files
+*.swp
+*.swo
+
+# Saved model checkpoints and generated artifacts
+results/saved_models/
+results/logs/
+
+# Ignore environment package manager files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignore temporary files created by editors or OS
+*~
+.DS_Store
+
+# Ignore local data caches
+*.sqlite
+*.db

@@ -1,0 +1,16 @@
+\begin{tabular}{llrrrrrrr}
+\hline
+\rowcolor{TableHeader}
+\tblhead{modele} & \tblhead{initialisation} & \tblhead{accuracy} & \tblhead{precision} & \tblhead{recall} & \tblhead{f1\_score} & \tblhead{best\_epoch} & \tblhead{best\_val\_loss} & \tblhead{parametres\_entrainables} \\
+\hline
+mlp\_sequential & gaussian & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 27 & 0.0078 & 4130 \\
+\rowcolor{TableAlt}
+mlp\_sequential & constant & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 30 & 0.2555 & 4130 \\
+mlp\_sequential & xavier & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 29 & 0.0089 & 4130 \\
+\rowcolor{TableAlt}
+mlp\_custom & gaussian & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 30 & 0.0112 & 4130 \\
+mlp\_custom & constant & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 30 & 0.2593 & 4130 \\
+\rowcolor{TableAlt}
+mlp\_custom & xavier & 0.9419 & 0.9452 & 0.9419 & 0.9423 & 30 & 0.0092 & 4130 \\
+\hline
+\end{tabular}

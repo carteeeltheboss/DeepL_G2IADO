@@ -1,0 +1,8 @@
+=== named_parameters() ===
+fc1.weight: shape=(64, 30), n=1920
+fc1.bias: shape=(64,), n=64
+fc2.weight: shape=(32, 64), n=2048
+fc2.bias: shape=(32,), n=32
+output_layer.weight: shape=(2, 32), n=64
+output_layer.bias: shape=(2,), n=2
+Paramètres entraînables : 4130

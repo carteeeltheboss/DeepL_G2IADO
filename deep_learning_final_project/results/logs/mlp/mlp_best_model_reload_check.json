@@ -1,0 +1,19 @@
+{
+  "best_model": {
+    "modele": "mlp_sequential",
+    "initialisation": "gaussian",
+    "accuracy": 0.9418604651162791,
+    "precision": 0.9451631815516904,
+    "recall": 0.9418604651162791,
+    "f1_score": 0.9423315317102197,
+    "best_epoch": 30,
+    "best_val_loss": 0.0091844093119509,
+    "parametres_entrainables": 4130
+  },
+  "reloaded_metrics": {
+    "accuracy": 0.9418604651162791,
+    "precision": 0.9451631815516904,
+    "recall": 0.9418604651162791,
+    "f1_score": 0.9423315317102197
+  }
+}

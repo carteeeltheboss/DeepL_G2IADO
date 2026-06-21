@@ -1,0 +1,2248 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{multirow}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\begin{quote}
+EMSI --- École Marocaine des Sciences de l'Ingénieur Module : Deep
+Learning\\
+Année universitaire 2025--2026
+
+RAPPORT DE PROJET\\
+\textbf{Guide de Référence pour l'Entraînement de Modèles de Deep
+Learning}\\
+MLP • CNN • RNN • LSTM • GRU • Architectures Hybrides
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Réalisé par :
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\textbf{{[}NOM Prénom{]}}
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Encadré par :
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\textbf{Mme. HIDILA Zineb}
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Filière :
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+\textbf{{[}Filière / Année{]}}
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{Table des matières}
+
+Table des matières
+...............................................................................................................
+2 1. Introduction
+.......................................................................................................................
+4 1.1 Vue d'ensemble des architectures
+...............................................................................
+4 2. Préparation des données
+..................................................................................................
+5 2.1 Exploration et compréhension du dataset
+.................................................................... 5
+2.2 Prétraitement\\
+...............................................................................................................
+5 2.2.1 Données tabulaires (MLP)
+.....................................................................................
+5 2.2.2 Images (CNN)
+.......................................................................................................
+5 2.2.3 Séquences/Signaux (RNN/LSTM/GRU)
+................................................................ 6 2.3
+Séparation des données
+..............................................................................................
+6 3. Architectures en détail\\
+.......................................................................................................
+7 3.1 Perceptron Multicouche (MLP)
+....................................................................................
+7 3.1.1 Structure type
+........................................................................................................
+7 3.1.2 Points
+d'attention...................................................................................................
+7 3.2 Réseaux de Neurones Convolutifs (CNN)
+.................................................................... 8
+3.2.1 Structure type (CNN personnalisé)\\
+........................................................................
+8 3.2.2 Transfert d'apprentissage
+......................................................................................
+8 3.2.3 Augmentation de données
+....................................................................................
+8 3.3 Réseaux Récurrents (RNN, LSTM, GRU)
+.................................................................... 9
+3.3.1 Comparaison des variantes
+...................................................................................
+9 3.3.2 Configuration type (LSTM)
+....................................................................................
+9 3.4 Architectures hybrides
+...............................................................................................
+10 3.4.1 CNN +
+LSTM.......................................................................................................
+10 3.4.2 CNN + MLP (Fusion multimodale)
+.......................................................................
+10 3.4.3 Stratégies de fusion
+............................................................................................
+10 4. Processus d'entraînement
+...............................................................................................
+11 4.1 Fonctions de perte
+.....................................................................................................
+11 4.2 Gestion du déséquilibre des classes
+..........................................................................
+11 4.3 Optimiseurs
+...............................................................................................................
+11 4.4 Schedulers de learning rate
+.......................................................................................
+11 4.5 Régularisation
+...........................................................................................................
+12 5. Guide des hyperparammètres
+.........................................................................................
+13 5.1 Hyperparammètres clés par architecture
+................................................................... 13
+5.1.1 MLP
+....................................................................................................................
+13 5.1.2 CNN
+....................................................................................................................
+13 5.1.3 RNN / LSTM / GRU
+.............................................................................................
+13 5.2 Stratégies de recherche d'hyperparammètres
+........................................................... 13
+\end{quote}
+
+Page 2
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+\end{quote}
+
+6. Métriques d'évaluation
+....................................................................................................
+15 6.1 Métriques de classification
+.........................................................................................
+15 6.2 Visualisations obligatoires
+.........................................................................................
+15 6.3 Diagnostic par les courbes d'apprentissage
+............................................................... 15 7.
+Interprétabilité des modèles
+............................................................................................
+17 8. Bonnes pratiques et erreurs fréquentes
+..........................................................................
+18 8.1 Checklist avant entraînement
+....................................................................................
+18 8.2 Erreurs fréquentes
+.....................................................................................................
+18 8.3 Structure type du code d'entraînement
+......................................................................
+18 9. Guide de rédaction du rapport
+.........................................................................................
+20 9.1 Structure attendue
+.....................................................................................................
+20 9.2 Critères de qualité rédactionnelle
+..............................................................................
+20 9.3 Ce qu'il faut éviter
+......................................................................................................
+20 10. Références bibliographiques recommandées
+................................................................ 22 10.1
+Articles fondateurs
+...................................................................................................
+22 10.2 Ressources pédagogiques
+......................................................................................
+22
+
+Page 3
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{1. Introduction}
+
+Ce guide de référence présente la méthodologie complète pour
+l'entraînement de modèles de deep learning, couvrant les architectures
+fondamentales (MLP, CNN, RNN, LSTM, GRU) ainsi que les architectures
+hybrides. Il constitue un cadre méthodologique que l'étudiant doit
+adapter à son propre projet.
+
+L'objectif est de fournir une démarche structurée et reproductible,
+depuis la préparation des données jusqu'à l'analyse critique des
+résultats, en passant par le choix d'architecture, l'optimisation des
+hyperparammètres et l'interprétation des modèles.
+
+\textbf{1.1 Vue d'ensemble des architectures}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Architecture}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Données cibles}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Biais inductif}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cas d'usage typique}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+MLP
+
+CNN
+\end{quote}
+\end{minipage} & Tabulaires
+
+Images, grilles 2D & Aucun
+
+Spatial (localité) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classification/régression sur features structurées
+
+Classification d'images, détection d'objets
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+RNN
+
+LSTM
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Séquences courtes
+
+Séquences longues
+\end{quote}
+\end{minipage} & Temporel (ordre)
+
+Temporel
+
+(mémoire longue) & NLP simple, séries courtes
+
+Traduction, analyse de signaux \\
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\multirow{2}{*}{\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+GRU
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+Séquences
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Temporel
+\end{minipage} &
+\multirow{2}{*}{\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Alternative légère au LSTM
+\end{quote}
+\end{minipage}} \\
+& \begin{minipage}[b]{\linewidth}\raggedright
+longues
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+(simplifié)
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Hybride
+\end{quote}
+\end{minipage} & Spatio-temporel &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Spatial + Temporel
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Vidéo, signaux multicanaux
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+(CNN+LSTM)
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Page 4
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{2. Préparation des données}
+
+\textbf{2.1 Exploration et compréhension du dataset}
+
+Avant toute modélisation, une exploration approfondie du dataset est
+indispensable. Cette phase doit couvrir les points suivants :
+
+• Description générale : nombre d'échantillons, nombre de
+variables/features, type de chaque variable (numérique, catégorielle,
+ordinale).
+
+• Distribution de la variable cible : vérifier l'équilibre des classes
+et quantifier le ratio de déséquilibre.
+
+• Statistiques descriptives : moyenne, médiane, écart-type, min/max pour
+les variables numériques.
+
+• Valeurs manquantes : cartographier les taux de données manquantes par
+variable.
+
+• Corrélations : matrice de corrélation pour identifier les redondances
+et les relations linéaires.
+
+• Visualisations : histogrammes, boxplots, pairplots, heatmaps de
+corrélation.
+
+\textbf{Conseil :} Toujours visualiser les données avant de coder le
+modèle. Un simple histogramme peut révéler un déséquilibre critique ou
+une distribution inattendue.
+
+\textbf{2.2 Prétraitement}
+
+\textbf{2.2.1 Données tabulaires (MLP)}
+
+1. Gestion des valeurs manquantes : imputation par la médiane
+(numérique) ou le mode (catégorielle). Pour les taux supérieurs à 40\%,
+envisager la suppression de la variable.
+
+2. Encodage des variables catégorielles : One-Hot Encoding pour les
+variables nominales (≤ 10 catégories), Label Encoding pour les
+ordinales, Target Encoding si cardinalité élevée.
+
+3. Normalisation/Standardisation : StandardScaler (z-score) ou
+MinMaxScaler selon la distribution. Appliquer après le split pour éviter
+le data leakage.
+
+4. Sélection de features : suppression des variables à variance nulle,
+analyse de corrélation, feature importance préliminaire.
+
+\textbf{Attention :} Toujours fitter le scaler sur le train set
+uniquement, puis transformer train, validation et test avec le même
+scaler. Fitter sur l'ensemble complet constitue un data leakage.
+
+\textbf{2.2.2 Images (CNN)}
+
+1. Redimensionnement : taille uniforme (ex. 224×224 ou 256×256). Choisir
+en fonction de la mémoire GPU disponible.
+
+2. Normalisation : mise à l'échelle {[}0, 1{]}, puis normalisation par
+la moyenne et l'écart-type (ImageNet si transfert d'apprentissage :
+mean={[}0.485, 0.456, 0.406{]}, std={[}0.229, 0.224, 0.225{]}).
+
+3. Augmentation de données (train uniquement) : rotations,
+retournements, recadrage aléatoire, ajustement de luminosité/contraste,
+ajout de bruit gaussien.
+\end{quote}
+
+Page 5
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+4. Conversion de format : DICOM vers PNG/JPG si nécessaire, gestion des
+canaux (niveaux de gris → 3 canaux pour les modèles pré-entraînés).
+
+\textbf{2.2.3 Séquences/Signaux (RNN/LSTM/GRU)}
+
+1. Rééchantillonnage : uniformiser la fréquence d'échantillonnage (ex.
+500 Hz → 100 Hz pour réduire la complexité).
+\end{quote}
+
+2. Segmentation : découpage en fenêtres de taille fixe (avec ou sans
+recouvrement).
+
+\begin{quote}
+3. Normalisation : z-score par canal/variable ou normalisation min-max
+par séquence.
+
+4. Padding/Troncature : uniformiser la longueur des séquences (padding
+avec zéros ou troncature).
+
+5. Gestion du bruit : filtrage passe-bande si nécessaire, suppression
+des artefacts.
+
+\textbf{2.3 Séparation des données}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Ensemble}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Proportion}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Rôle}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Précautions}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Train\\
+Validation
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+70--80\%\\
+10--15\%
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Entraînement du modèle\\
+Tuning des hyperparammètres\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Stratified split obligatoire\\
+Jamais utilisé pour le gradient
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Test
+\end{quote}
+\end{minipage} & 10--15\% & Évaluation finale unique & Isolé jusqu'à
+l'évaluation finale \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{Attention :} Le test set ne doit être utilisé qu'une seule fois,
+pour l'évaluation finale. Toute utilisation répétée pour ajuster le
+modèle constitue un overfitting indirect.
+\end{quote}
+
+Page 6
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{3. Architectures en détail}
+
+\textbf{3.1 Perceptron Multicouche (MLP)}
+
+Le MLP est l'architecture la plus directe pour les données tabulaires.
+Chaque neurone d'une couche est connecté à tous les neurones de la
+couche suivante (fully connected). La sortie d'un neurone est : y =
+f(Wᵀx + b).
+
+\textbf{3.1.1 Structure type}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Couche}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Type}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Paramètres}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Remarques}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Entrée
+
+Cachée 1
+\end{quote}
+\end{minipage} & Linear
+
+Linear + ReLU + BN +
+
+Dropout & n\_features → 128
+
+128 → 64 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Dimension = nombre de variables
+
+BatchNorm avant ou après ReLU
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Cachée 2
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Linear + ReLU + BN +
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+64 → 32
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Dropout = 0.2 à 0.5
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Dropout
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Sortie
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Linear + Sigmoid/Softmax
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+32 → n\_classes
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Sigmoid (binaire) / Softmax
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 0\tabcolsep) * \real{1.0000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+(multi-classe)
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{3.1.2 Points d'attention}
+
+• Architecture en entonnoir : réduire progressivement la dimension (ex.
+256 → 128 → 64 → 32).
+
+• Ne pas aller trop profond : 2 à 4 couches cachées suffisent
+généralement pour les données tabulaires.
+
+• Batch Normalization : stabilise et accélère l'entraînement.
+
+• Dropout : régularisation essentielle pour éviter le surapprentissage.
+Commencer à 0.3.
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+•
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Fonction de perte : BCEWithLogitsLoss (binaire) ou CrossEntropyLoss
+(multi-classe).
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Page 7
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{3.2 Réseaux de Neurones Convolutifs (CNN)}
+
+Les CNN exploitent la structure spatiale des images grâce à la
+convolution (partage de poids, invariance par translation). Un bloc
+convolutif typique comprend : Conv2d → BatchNorm → ReLU → MaxPool.
+
+\textbf{3.2.1 Structure type (CNN personnalisé)}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Bloc}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Opérations}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Entrée → Sortie}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Remarques}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Bloc 1
+
+Bloc 2
+\end{quote}
+\end{minipage} & Conv(3×3, 32) + BN + ReLU + MaxPool(2)
+
+Conv(3×3, 64) + BN + ReLU + MaxPool(2) & 1×256×256 → 32×128×128
+
+32×128×128 → 64×64×64 & Filtres larges en début
+
+Doubler les filtres \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Bloc 3
+
+Bloc 4
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Conv(3×3, 128) + BN + ReLU + MaxPool(2)
+
+Conv(3×3, 256) + BN + ReLU + AdaptiveAvgPool
+\end{quote}
+\end{minipage} & 64×64×64 → 128×32×32
+
+128×32×32 → 256×1×1 & Augmenter la profondeur
+
+Global pooling en sortie \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classif.
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Linear(256, 128) + ReLU + Dropout + Linear(128, 1)
+\end{quote}
+\end{minipage} & 256 → 1 & Couches denses finales \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{3.2.2 Transfert d'apprentissage}
+
+Le transfert d'apprentissage consiste à réutiliser un modèle
+pré-entraîné (ResNet, VGG, EfficientNet) et à adapter les dernières
+couches à la tâche cible. Deux stratégies principales :
+
+• Feature extraction : geler toutes les couches convolutives, ne
+réentraîner que le classifieur. Rapide, efficace avec peu de données.
+
+• Fine-tuning : dégeler progressivement les dernières couches
+convolutives. Plus performant mais nécessite plus de données et un
+learning rate faible (1e-4 à 1e-5).
+
+\textbf{Conseil :} Pour le fine-tuning, utiliser un learning rate
+différentiel : lr faible pour les couches pré-entraînées (1e-5), lr plus
+élevé pour le classifieur (1e-3).
+
+\textbf{3.2.3 Augmentation de données}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Transformation}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Paramètres typiques}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Quand l'utiliser}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+RandomHorizontalFlip
+
+RandomRotation
+\end{quote}
+\end{minipage} & p=0.5
+
+degrees=15--30 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Toujours (sauf si orientation est discriminante)
+\end{quote}
+
+Images sans orientation fixe
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+GaussianBlur\\
+RandomAffine\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+kernel\_size=3\\
+translate=(0.1, 0.1)
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Pour robustesse au bruit d'acquisition Pour simuler des décalages
+spatiaux
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+Page 8
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{3.3 Réseaux Récurrents (RNN, LSTM, GRU)}
+
+Les architectures récurrentes traitent des données séquentielles en
+maintenant un état caché qui se propage dans le temps. Le RNN simple
+souffre de la disparition du gradient sur les longues séquences, ce qui
+a motivé le développement du LSTM et du GRU.
+
+\textbf{3.3.1 Comparaison des variantes}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Critère}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{RNN simple}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{LSTM}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{GRU}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+État interne\\
+Portes
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1 état caché (h) Aucune
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2 états (h + cellule c) 3 (entrée, oubli, sortie)
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1 état caché (h) 2 (reset, update)
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Paramètres\\
+Mémoire longue
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Le moins\\
+Faible
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Le plus\\
+Excellente
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Intermédiaire\\
+Très bonne
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Vitesse\\
+d'entraînement
+
+Quand l'utiliser
+\end{quote}\strut
+\end{minipage} & Le plus rapide
+
+Prototypage rapide & Le plus lent
+
+Séquences longues,
+
+défaut & Intermédiaire
+
+Compromis
+
+performance/vitesse \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{3.3.2 Configuration type (LSTM)}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Paramètre}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Valeur recommandée}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Remarques}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+input\_size\\
+hidden\_size
+\end{quote}\strut
+\end{minipage} & Nombre de features par timestep 64 à 256 &
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Ex. 12 pour ECG 12 dérivations Commencer à 128
+\end{quote}
+\end{minipage} \\
+num\_layers bidirectional & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1 à 3\\
+True
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2 couches = bon compromis\\
+Capture le contexte passé et futur
+\end{quote}\strut
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+dropout
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+0.2 à 0.5
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Entre les couches LSTM (num\_layers \textgreater{} 1)
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+batch\_first
+\end{quote}
+\end{minipage} & True & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Convention PyTorch : (batch, seq, features)
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{Note :} Pour la classification, on utilise généralement le
+dernier état caché (ou la concaténation forward + backward si
+bidirectionnel) passé à une couche dense.
+\end{quote}
+
+Page 9
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{3.4 Architectures hybrides}
+
+Les architectures hybrides combinent les forces de plusieurs familles de
+réseaux pour traiter des données présentant des structures multiples
+(spatiale + temporelle, par exemple).
+
+\textbf{3.4.1 CNN + LSTM}
+
+Cette architecture utilise un CNN comme extracteur de features
+spatiales, puis un LSTM pour capturer les dépendances temporelles. Cas
+d'usage typiques : classification de vidéos, analyse de signaux
+multicanaux avec structure spatiale.
+
+\textbf{Pipeline :} Entrée (batch, seq\_len, C, H, W) → CNN par timestep
+→ (batch, seq\_len, n\_features) → LSTM → (batch, hidden) → Dense →
+Prédiction.
+
+\textbf{3.4.2 CNN + MLP (Fusion multimodale)}
+
+Pour combiner des données hétérogènes (ex. image + données tabulaires),
+on extrait des embeddings de chaque branche puis on les concatène avant
+une couche de décision.
+
+\textbf{Pipeline :} Branche image (CNN → embedding) + Branche tabulaire
+(MLP → embedding) → Concaténation → Dense → Prédiction.
+
+\textbf{3.4.3 Stratégies de fusion}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Stratégie}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Description}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Avantages}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Inconvénients}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Early fusion
+
+Late fusion
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Concaténation des données brutes en entrée
+
+\begin{quote}
+Concaténation des embeddings avant la décision
+\end{quote}
+\end{minipage} & Simple à implémenter
+
+Flexible, modulaire & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Dimensions incompatibles
+\end{quote}
+
+Interactions limitées
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\multirow{2}{*}{\begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Intermediate fusion
+\end{quote}
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Fusion à un niveau
+\end{quote}
+\end{minipage} &
+\multirow{2}{*}{\begin{minipage}[b]{\linewidth}\raggedright
+Interactions riches
+\end{minipage}} & \begin{minipage}[b]{\linewidth}\raggedright
+Plus complexe à
+\end{minipage} \\
+& \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+intermédiaire du réseau
+\end{quote}
+\end{minipage} & & \begin{minipage}[b]{\linewidth}\raggedright
+concevoir
+\end{minipage} \\
+\midrule()
+\endhead
+\multirow{2}{*}{\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Attention-based
+\end{quote}
+\end{minipage}} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Mécanisme d'attention
+\end{quote}
+\end{minipage} & \multirow{2}{*}{Pondération adaptative} & Coût
+computationnel \\
+& cross-modal & & élevé \\
+\bottomrule()
+\end{longtable}
+
+Page 10
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{4. Processus d'entraînement}
+
+\textbf{4.1 Fonctions de perte}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Tâche}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+\textbf{Fonction de perte PyTorch}
+\end{quote}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Activation de sortie}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Quand l'utiliser}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classification binaire Classification multi-classe
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+nn.BCEWithLogitsLoss() nn.CrossEntropyLoss()
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Aucune (logits) Aucune (logits)
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2 classes, label unique N classes mutuellement exclusives
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classification multi-labels
+
+Régression
+\end{quote}
+\end{minipage} & nn.BCEWithLogitsLoss()
+
+nn.MSELoss() ou
+
+nn.L1Loss() & Aucune (logits)
+
+Aucune (linéaire) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Plusieurs labels simultanés
+
+Prédiction de valeurs continues
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{Attention :} BCEWithLogitsLoss attend des logits (pas de
+sigmoïde en sortie).
+
+CrossEntropyLoss attend des logits (pas de softmax). Appliquer
+sigmoïde/softmax avant ces loss fonctions est une erreur fréquente.
+
+\textbf{4.2 Gestion du déséquilibre des classes}
+
+Le déséquilibre des classes est un problème récurrent en deep learning
+appliqué. Plusieurs stratégies peuvent être combinées :
+
+• Pondération de la loss : calculer les poids inversement proportionnels
+à la fréquence de chaque classe (paramètre weight de CrossEntropyLoss ou
+pos\_weight de BCEWithLogitsLoss).
+
+• Suréchantillonnage de la classe minoritaire : SMOTE (données
+tabulaires), augmentation ciblée (images).
+
+• Sous-échantillonnage de la classe majoritaire : à utiliser avec
+précaution (perte d'information).
+
+• Focal Loss : variante de la BCE qui réduit le poids des exemples
+faciles. Utile pour les déséquilibres sévères.
+
+\textbf{4.3 Optimiseurs}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Optimiseur}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Learning rate typique}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Avantages}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Cas d'usage}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+SGD + Momentum
+
+Adam
+\end{quote}
+\end{minipage} & 0.01 à 0.1
+
+1e-3 à 1e-4 & Bonne généralisation
+
+Convergence rapide,
+
+adaptatif & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+CNN avec transfert, entraînement long
+
+Défaut pour la plupart des cas
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+AdamW
+
+RMSProp
+\end{quote}
+\end{minipage} & 1e-3 à 1e-4
+
+1e-3 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Adam + weight decay découplé
+\end{quote}
+
+Bon pour les RNN
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Fine-tuning de modèles pré-entraînés
+
+\begin{quote}
+Séquences, gradients instables
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{4.4 Schedulers de learning rate}
+\end{quote}
+
+Page 11
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+Le scheduler ajuste le learning rate au cours de l'entraînement pour
+améliorer la
+
+convergence :
+
+• StepLR : réduit le lr d'un facteur gamma tous les step\_size époques.
+Simple et
+
+efficace.
+
+• ReduceLROnPlateau : réduit le lr quand la métrique de validation
+stagne.
+
+Recommandé comme défaut.
+
+• CosineAnnealingLR : décroissance en cosinus. Populaire pour le
+fine-tuning.
+
+• OneCycleLR : monte puis descend le lr en un cycle. Peut accélérer la
+convergence.
+
+\textbf{4.5 Régularisation}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Technique}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Où l'appliquer}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Paramètres}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Effet}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Dropout
+
+Batch Normalization
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Après les couches denses/LSTM
+
+Après Conv/Linear, avant ou après ReLU
+\end{quote}
+\end{minipage} & p = 0.2 à 0.5
+
+momentum=0.1 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Désactive des neurones aléatoirement
+
+Normalise les activations par batch
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Weight Decay (L2) Early Stopping
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Via l'optimiseur\\
+Boucle d'entraînement
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1e-4 à 1e-2\\
+patience = 5 à 15
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Pénalise les grands poids Arrête quand val\_loss\\
+stagne\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Data Augmentation
+
+Label Smoothing
+\end{quote}
+\end{minipage} & Pipeline de données (train)
+
+Fonction de perte & Variable
+
+ε = 0.1 & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Augmente la diversité virtuelle
+
+Adoucit les cibles (moins de confiance)
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+Page 12
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{5. Guide des hyperparammètres}
+
+\textbf{5.1 Hyperparammètres clés par architecture}
+
+\textbf{5.1.1 MLP}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hyperparammètre}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plage de recherche}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Défaut recommandé}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Nombre de couches cachées Neurones par couche
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+2 à 4\\
+32 à 512
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+3\\
+128, 64, 32 (entonnoir)
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Learning rate\\
+Batch size
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1e-4 à 1e-2\\
+32 à 256
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1e-3 (Adam)\\
+64
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+Dropout\\
+Époques\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+0.1 à 0.5\\
+50 à 200
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+0.3\\
+100 + early stopping
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Weight decay
+\end{quote}
+\end{minipage} & 0 à 1e-2 & 1e-4 \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{5.1.2 CNN}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hyperparammètre}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plage de recherche}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Défaut recommandé}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Nombre de blocs convolutifs Filtres par bloc
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+3 à 6\\
+16 à 512
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+4\\
+32, 64, 128, 256 (doublement)
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Taille du noyau\\
+Learning rate (from scratch)
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+3×3, 5×5, 7×7\\
+1e-3 à 1e-2
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+3×3 (standard)\\
+1e-3
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Époques\\
+Augmentation
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+20 à 100\\
+Légère à agressive
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+50 + early stopping Modérée
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{5.1.3 RNN / LSTM / GRU}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Hyperparammètre}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Plage de recherche}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Défaut recommandé}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Bidirectionnel\\
+Dropout inter-couches
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+True / False\\
+0.1 à 0.5
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+True\\
+0.3
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Learning rate\\
+Gradient clipping
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1e-4 à 1e-2\\
+0.5 à 5.0
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1e-3\\
+1.0
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Longueur de séquence
+\end{quote}
+\end{minipage} & Dépend du signal & 1000 (après rééchantillonnage) \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{5.2 Stratégies de recherche d'hyperparammètres}
+
+• Grid Search : exhaustif mais coûteux. Réserver pour 2--3
+hyperparammètres avec peu de valeurs.
+
+• Random Search : plus efficace que le grid search pour des espaces
+larges. 50--100 itérations.
+\end{quote}
+
+Page 13
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+•
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Recherche manuelle guidée : commencer par les défauts, varier un
+paramètre à la
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+fois. Approche pragmatique recommandée pour les projets étudiants.
+
+\textbf{Conseil :} Commencer par le learning rate (le plus impactant),
+puis batch size, puis profondeur, puis régularisation. Toujours fixer un
+seed pour la reproductibilité.
+\end{quote}
+
+Page 14
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{6. Métriques d'évaluation}
+
+\textbf{6.1 Métriques de classification}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Métrique}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Formule / Description}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Quand l'utiliser}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Accuracy
+
+Précision
+\end{quote}
+\end{minipage} & TP + TN / Total
+
+TP / (TP + FP) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classes équilibrées uniquement
+\end{quote}
+
+Coût élevé des faux positifs
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Rappel (Sensibilité)
+
+F1-Score
+\end{quote}
+\end{minipage} & TP / (TP + FN)
+
+2 × (Précision × Rappel) / (Précision +
+
+Rappel) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Coût élevé des faux négatifs (médical)
+\end{quote}
+
+Compromis précision/rappel
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+AUC-ROC
+
+Matrice de confusion
+\end{quote}
+\end{minipage} & Aire sous la courbe ROC
+
+Tableau TP/TN/FP/FN & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Métrique globale de discrimination
+\end{quote}
+
+Analyse détaillée des erreurs
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Macro F1
+
+Spécificité
+\end{quote}
+\end{minipage} & Moyenne des F1 par classe
+
+TN / (TN + FP) & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Classes multiples déséquilibrées
+\end{quote}
+
+Taux de vrais négatifs
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{Attention :} En médecine, le rappel (sensibilité) est souvent
+plus critique que la précision. Un faux négatif (maladie non détectée)
+est généralement plus dangereux qu'un faux positif (examen
+supplémentaire inutile).
+
+\textbf{6.2 Visualisations obligatoires}\\
+Chaque expérience doit produire les visualisations suivantes :
+
+1. Courbes d'apprentissage : loss et métrique principale (accuracy, F1)
+sur train et validation en fonction des époques. Permet de diagnostiquer
+l'overfitting/underfitting.
+
+2. Matrice de confusion : sur le test set, normalisée ou non. Identifie
+les confusions inter-classes.
+
+3. Courbe ROC et AUC : pour chaque classe en classification
+binaire/multi-classe. 4. Tableau récapitulatif : toutes les
+configurations testées avec leurs hyperparammètres et métriques.
+
+\textbf{6.3 Diagnostic par les courbes d'apprentissage}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Observation}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Diagnostic}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Action corrective}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+train\_loss ↓↓, val\_loss ↓ puis ↑
+
+train\_loss ↓ lent, val\_loss ↓ lent
+\end{quote}
+\end{minipage} & Overfitting
+
+Underfitting & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Augmenter dropout, réduire modèle, early stopping
+
+Augmenter le modèle, réduire régularisation, augmenter lr
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+train\_loss et val\_loss stagnent haut
+
+train\_loss et val\_loss ↓ ensemble
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Modèle trop simple ou lr trop faible
+\end{quote}
+
+Bon entraînement
+\end{minipage} & Augmenter capacité ou lr
+
+Continuer, surveiller la divergence \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+val\_loss oscille fortement
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Learning rate trop élevé ou batch trop petit
+\end{quote}
+\end{minipage} & Réduire lr, augmenter batch size \\
+\bottomrule()
+\end{longtable}
+
+Page 15
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+\end{quote}
+
+Page 16
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{7. Interprétabilité des modèles}
+
+L'interprétabilité est un enjeu majeur en deep learning appliqué,
+particulièrement dans les
+\end{quote}
+
+domaines critiques (santé, finance, sécurité). Un modèle performant mais
+opaque est
+
+\begin{quote}
+difficilement adoptable en pratique clinique.
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Architecture}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Méthode d'interprétation}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Ce qu'elle révèle}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+CNN\\
+CNN
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Grad-CAM\\
+Saliency Maps
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Quelles régions spatiales activent la décision Gradients de la sortie
+par rapport aux pixels d'entrée
+\end{quote}
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+RNN/LSTM Tous
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Gradient par rapport à l'entrée t-SNE / UMAP des\\
+embeddings\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Quels segments du signal sont discriminants Visualisation de l'espace
+latent appris
+\end{quote}
+\end{minipage} \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{Conseil :} Inclure au moins une méthode d'interprétation par
+architecture dans le rapport.
+
+Discuter la cohérence des résultats avec les connaissances du domaine.
+\end{quote}
+
+Page 17
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{8. Bonnes pratiques et erreurs fréquentes}
+
+\textbf{8.1 Checklist avant entraînement}
+
+1. Seed fixé (torch.manual\_seed, np.random.seed, random.seed) pour la
+reproductibilité.
+
+2. Data leakage vérifié : aucune fuite d'information du test vers le
+train.
+
+3. Dimensions vérifiées : input shape, output shape, nombre de classes.
+
+4. Baseline établie : modèle simple (régression logistique, prédiction
+majoritaire) comme référence.
+
+5. GPU disponible : torch.cuda.is\_available(), device =
+torch.device('cuda' if available).
+
+6. DataLoader configuré : shuffle=True pour train, shuffle=False pour
+val/test, num\_workers adapté.
+
+\textbf{8.2 Erreurs fréquentes}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Erreur}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Conséquence}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Solution}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Oublier model.eval() en évaluation
+
+Softmax avant\\
+CrossEntropyLoss
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Dropout et BN actifs → métriques faussées
+
+Double application → convergence dégradée
+\end{quote}
+\end{minipage} & Toujours model.eval() + torch.no\_grad()
+
+CrossEntropyLoss attend des logits bruts \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Normaliser sur tout le dataset
+
+Ignorer le déséquilibre des classes
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Data leakage → métriques optimistes
+
+\begin{quote}
+Modèle biaisé vers la classe majoritaire
+\end{quote}
+\end{minipage} & Fitter le scaler sur train uniquement
+
+Pondération de la loss, SMOTE, augmentation \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Batch size trop grand\\
+Pas de gradient clipping (RNN)
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Mauvaise généralisation Explosion du gradient → NaN
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+32 à 64 par défaut\\
+torch.nn.utils.clip\_grad\_norm\_(max\_norm=1.0)\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Oublier\\
+optimizer.zero\_grad()
+
+Pas d'early stopping
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+Accumulation de gradients → instabilité
+
+\begin{quote}
+Surapprentissage non détecté
+\end{quote}
+\end{minipage} & Appeler en début de chaque itération
+
+Monitorer val\_loss, patience=5--15 \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{8.3 Structure type du code d'entraînement}
+
+Chaque notebook ou script d'entraînement doit suivre cette structure
+logique :
+
+1. Imports et configuration (device, seeds, hyperparammètres).
+
+2. Chargement et exploration des données.
+
+3. Prétraitement et création des DataLoaders.
+
+4. Définition du modèle (classe héritant de nn.Module).
+
+5. Définition de la loss, de l'optimiseur et du scheduler.
+
+6. Boucle d'entraînement avec logging (train\_loss, val\_loss, métriques
+par époque).
+
+7. Évaluation sur le test set (une seule fois, après sélection du
+meilleur modèle). 8. Visualisations (courbes, matrices, Grad-CAM, etc.).
+
+9. Analyse critique et conclusions.
+\end{quote}
+
+Page 18
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+\end{quote}
+
+Page 19
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{9. Guide de rédaction du rapport}
+
+Le rapport constitue le livrable principal du projet. Il doit démontrer
+la compréhension
+
+théorique, la rigueur expérimentale et la capacité d'analyse critique de
+l'étudiant.
+
+\textbf{9.1 Structure attendue}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Section}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Contenu attendu}
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\textbf{Pages estimées}
+\end{minipage} \\
+\midrule()
+\endhead
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Page de garde\\
+Table des matières
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Titre, auteur, encadrant, filière, année Générée automatiquement
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1\\
+1
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Introduction\\
+Cadre théorique
+\end{quote}\strut
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Contexte, problématique, objectifs, plan Fondements mathématiques de
+chaque architecture
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1--2\\
+3--5
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Partie expérimentale
+
+Discussion transversale
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Dataset, prétraitement, architecture, résultats, analyse
+
+Comparaison architectures, adéquation données-modèle
+\end{quote}
+\end{minipage} & 8--15 (par partie)
+
+2--3 \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Impact sociétal / Éthique Conclusion
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Implications, biais, limites, contexte local Synthèse, résultats clés,
+perspectives
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+1--2\\
+1
+\end{quote}\strut
+\end{minipage} \\
+\begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Références
+
+Annexes
+\end{quote}
+\end{minipage} & \begin{minipage}[t]{\linewidth}\raggedright
+\begin{quote}
+Articles, datasets, frameworks (format IEEE/APA)
+
+Code clé, configurations, résultats complémentaires
+\end{quote}
+\end{minipage} & 1--2
+
+Variable \\
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+\textbf{9.2 Critères de qualité rédactionnelle}
+
+• Précision : chaque affirmation technique doit être justifiée (formule,
+référence,
+
+résultat expérimental).
+
+• Clarté : éviter les phrases vagues ("le modèle fonctionne bien").
+Quantifier
+
+systématiquement.
+
+• Esprit critique : ne pas se limiter à rapporter les résultats.
+Analyser les échecs,
+
+discuter les limites, proposer des améliorations.
+
+• Cohérence : le fil conducteur (problématique) doit être visible tout
+au long du rapport.
+
+• Références : citer les articles fondateurs des architectures utilisées
+(LeCun,
+
+Hochreiter, He, etc.).
+
+\textbf{9.3 Ce qu'il faut éviter}
+
+• Copier-coller du code sans explication. Le code doit être commenté et
+justifié dans le
+
+texte.
+
+• Présenter des résultats sans analyse. Un tableau de métriques seul ne
+constitue pas
+
+une analyse.
+
+• Ignorer les mauvais résultats. Un modèle qui échoue est aussi
+instructif qu'un
+
+modèle performant, à condition d'analyser pourquoi.
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+•
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Utiliser l'accuracy comme unique métrique sur des classes
+déséquilibrées.
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+Page 20
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+\end{quote}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule()
+\begin{minipage}[b]{\linewidth}\raggedright
+•
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\begin{quote}
+Omettre les détails de reproductibilité : seeds, versions de librairies,
+\end{quote}
+\end{minipage} \\
+\midrule()
+\endhead
+\bottomrule()
+\end{longtable}
+
+\begin{quote}
+hyperparammètres.
+\end{quote}
+
+Page 21
+
+\begin{quote}
+\emph{Guide de Référence --- Entraînement de Modèles Deep Learning}
+
+\textbf{10. Références bibliographiques recommandées}
+
+\textbf{10.1 Articles fondateurs}
+
+{[}1{]} Rosenblatt, F. (1958). The Perceptron: A Probabilistic Model for
+Information Storage and Organization in the Brain. Psychological Review,
+65(6), 386--408.
+
+{[}2{]} Rumelhart, D. E., Hinton, G. E., \& Williams, R. J. (1986).
+Learning representations by back-propagating errors. Nature, 323,
+533--536.
+
+{[}3{]} LeCun, Y., Bottou, L., Bengio, Y., \& Haffner, P. (1998).
+Gradient-Based Learning Applied to Document Recognition. Proceedings of
+the IEEE, 86(11), 2278--2324.
+
+{[}4{]} Hochreiter, S. \& Schmidhuber, J. (1997). Long Short-Term
+Memory. Neural Computation, 9(8), 1735--1780.
+
+{[}5{]} Cho, K., et al. (2014). Learning Phrase Representations using
+RNN Encoder-Decoder for Statistical Machine Translation. EMNLP 2014.
+
+{[}6{]} He, K., Zhang, X., Ren, S., \& Sun, J. (2016). Deep Residual
+Learning for Image Recognition. CVPR 2016.
+
+{[}7{]} Kingma, D. P. \& Ba, J. (2015). Adam: A Method for Stochastic
+Optimization. ICLR 2015.
+
+{[}8{]} Srivastava, N., et al. (2014). Dropout: A Simple Way to Prevent
+Neural Networks from Overfitting. JMLR, 15, 1929--1958.
+
+{[}9{]} Ioffe, S. \& Szegedy, C. (2015). Batch Normalization:
+Accelerating Deep Network Training by Reducing Internal Covariate Shift.
+ICML 2015.
+
+{[}10{]} Selvaraju, R. R., et al. (2017). Grad-CAM: Visual Explanations
+from Deep Networks via Gradient-based Localization. ICCV 2017.
+
+{[}11{]} Lundberg, S. \& Lee, S. (2017). A Unified Approach to
+Interpreting Model Predictions. NeurIPS 2017.
+
+\textbf{10.2 Ressources pédagogiques}
+
+{[}12{]} Goodfellow, I., Bengio, Y., \& Courville, A. (2016). Deep
+Learning. MIT Press.
+
+{[}13{]} PyTorch Documentation officielle :
+https://pytorch.org/docs/stable/
+
+{[}14{]} PyTorch Tutorials : https://pytorch.org/tutorials/
+
+{[}15{]} Scikit-learn : https://scikit-learn.org/stable/
+\end{quote}
+
+Page 22
+
+\end{document}

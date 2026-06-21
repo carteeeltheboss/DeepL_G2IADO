@@ -1,0 +1,258 @@
+\chapter{Partie II --- CNN et images}
+
+\section{Pourquoi un MLP est mal adapté aux images}
+Un MLP traite une image aplatie comme un simple vecteur de pixels. Cette représentation détruit l’organisation spatiale locale. Deux pixels voisins dans l’image deviennent deux composantes arbitraires dans un vecteur sans voisinage explicite. Le MLP n’exploite donc ni la \textbf{localité}, ni le \textbf{partage des poids}, ni la \textbf{hiérarchie spatiale}. De plus, le nombre de paramètres explose rapidement lorsque la résolution ou la profondeur des images augmente.
+
+\section{Concepts fondamentaux des CNN}
+Les réseaux convolutifs introduisent plusieurs biais inductifs adaptés à la vision :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{localité} : un filtre ne regarde qu’un voisinage réduit ;
+    \item \textbf{partage des poids} : le même filtre est appliqué partout ;
+    \item \textbf{hiérarchie spatiale} : les premières couches détectent des motifs simples, les suivantes des structures plus abstraites ;
+    \item \textbf{convolution / corrélation croisée} : combinaison locale entre un noyau et une carte d’entrée ;
+    \item \textbf{padding} : contrôle de la conservation de la taille spatiale ;
+    \item \textbf{stride} : contrôle de l’échantillonnage et donc de la résolution en sortie ;
+    \item \textbf{pooling} : agrégation locale pour réduire la sensibilité aux petites translations ;
+    \item \textbf{canaux} : représentation de plusieurs cartes de caractéristiques ;
+    \item \textbf{convolution $1 \times 1$} : recombinaison linéaire des canaux sans agrandir le champ spatial.
+\end{itemize}
+
+\section{Calculs manuels}
+Pour une entrée de taille $n$, un noyau de taille $k$, un padding $p$ et un stride $s$, la taille de sortie d’une convolution 2D vaut :
+\[
+\text{sortie} = \left\lfloor \frac{n-k+2p}{s} \right\rfloor + 1.
+\]
+Pour un pooling de taille $k$ et de stride $s$ :
+\[
+\text{sortie} = \left\lfloor \frac{n-k}{s} \right\rfloor + 1.
+\]
+Le projet inclut également une implémentation manuelle de la corrélation croisée 2D, du max pooling et de l’average pooling.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.9\linewidth]{\resultspath/tables/cnn/cnn_manual_ops_comparison.png}
+    \caption{Comparaison entre opérations manuelles et couches PyTorch.}
+\end{figure}
+Cette figure vérifie que les implémentations manuelles reproduisent bien le comportement attendu des opérateurs de PyTorch. Elle joue ici un rôle pédagogique important : avant d’utiliser des couches haut niveau, il faut comprendre ce qu’elles calculent.
+
+\begin{table}[H]
+    \centering
+    \caption{Résultats des calculs de taille de sortie pour convolution et pooling.}
+    \safetableinput{\resultspath/tables/cnn/cnn_manual_formula_results.tex}
+\end{table}
+Les formules de taille sont indispensables pour dimensionner correctement les couches linéaires terminales et pour interpréter l'effet réel du padding et du stride.
+
+\paragraph{Trace dimensionnelle complète du LeNet par défaut.}
+Appliquons les formules ci-dessus couche par couche pour une entrée Fashion-MNIST de taille $1 \times 28 \times 28$ :
+\begin{enumerate}
+    \item \textbf{Conv1} ($k=5$, $p=2$, $s=1$, 16 filtres) : $\lfloor(28-5+4)/1\rfloor+1 = 28$ $\Rightarrow$ sortie $16 \times 28 \times 28$.
+    \item \textbf{MaxPool1} ($k=2$, $s=2$) : $\lfloor(28-2)/2\rfloor+1 = 14$ $\Rightarrow$ sortie $16 \times 14 \times 14$.
+    \item \textbf{Conv2} ($k=5$, $p=2$, $s=1$, 32 filtres) : $\lfloor(14-5+4)/1\rfloor+1 = 14$ $\Rightarrow$ sortie $32 \times 14 \times 14$.
+    \item \textbf{MaxPool2} ($k=2$, $s=2$) : $\lfloor(14-2)/2\rfloor+1 = 7$ $\Rightarrow$ sortie $32 \times 7 \times 7$.
+    \item \textbf{Flatten} : $32 \times 7 \times 7 = 1568$ neurones en entrée du classifieur.
+\end{enumerate}
+Lorsque le padding est mis à zéro, Conv1 produit $\lfloor(28-5)/1\rfloor+1 = 24$, réduisant la sortie finale à $32 \times 5 \times 5 = 800$. Avec un stride de 2 en Conv1, la taille chute directement à $14$ avant même le premier pooling, illustrant la perte d'information spatiale.
+
+\section{Jeu de données et modèles}
+Le dataset retenu est \textbf{Fashion-MNIST} \citep{xiao2017fashion}, composé d’images en niveaux de gris de taille $28 \times 28$ réparties en 10 classes d’articles vestimentaires. Il est plus intéressant que MNIST car les classes sont visuellement plus ambiguës et obligent le modèle à apprendre des motifs plus fins.
+
+Les modèles étudiés sont :
+\begin{enumerate}
+    \item un \textbf{MLP image} servant de baseline ;
+    \item un \textbf{CNN inspiré de LeNet} ;
+    \item une \textbf{variante améliorée} avec plus de filtres et option de convolution $1 \times 1$.
+\end{enumerate}
+
+\section{Protocole expérimental}
+Les expériences portent sur :
+\begin{itemize}[leftmargin=1.2cm]
+    \item la comparaison MLP vs CNN ;
+    \item l’effet du \texttt{padding} ;
+    \item l’effet du \texttt{stride} ;
+    \item max pooling vs average pooling ;
+    \item le nombre de filtres ;
+    \item la présence ou non d’une convolution $1 \times 1$.
+\end{itemize}
+
+\section{Résultats}
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.8\linewidth]{\resultspath/figures/cnn/fashion_mnist_samples.png}
+    \caption{Exemples d’images issues de Fashion-MNIST.}
+\end{figure}
+Cet aperçu visuel rappelle que plusieurs classes sont proches les unes des autres, notamment \emph{shirt}, \emph{pullover} et \emph{coat}. La tâche n’est donc pas triviale malgré la faible résolution.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparaison des expériences réalisées sur Fashion-MNIST.}
+    \safetableinput{\resultspath/tables/cnn/cnn_experiments_comparison.tex}
+\end{table}
+Le tableau synthétise l’impact des différents choix architecturaux. L’objectif n’est pas seulement d’identifier le meilleur score, mais de comprendre quels hyperparamètres modifient réellement la capacité du réseau à extraire des motifs spatiaux robustes.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.85\linewidth]{\resultspath/figures/cnn/cnn_accuracy_comparison.png}
+    \caption{Comparaison des accuracy des modèles image.}
+\end{figure}
+Cette comparaison visuelle permet de repérer rapidement l’influence des différents réglages. Dans les exécutions du projet, certains CNN simples ne surpassent pas systématiquement la baseline MLP sur des budgets d’entraînement très courts, ce qui constitue un résultat intéressant : l’avantage structurel d’un CNN existe, mais il doit être effectivement appris.
+Sur l’exécution complète retenue pour le rapport, la variante \emph{LeNet more filters} atteint l’accuracy la plus élevée, de l’ordre de 0,88, et dépasse clairement la baseline MLP image, restée autour de 0,85.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/mlp_image_baseline_curves.png}
+        \caption{MLP Image Baseline}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_default_curves.png}
+        \caption{LeNet (Défaut)}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_padding_zero_curves.png}
+        \caption{LeNet (Padding 0)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_stride_two_curves.png}
+        \caption{LeNet (Stride 2)}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_avg_pool_curves.png}
+        \caption{LeNet (Average Pooling)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_more_filters_curves.png}
+        \caption{LeNet (Plus de filtres)}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/improved_without_1x1_curves.png}
+        \caption{Modèle Amélioré (Sans 1x1)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/improved_with_1x1_curves.png}
+        \caption{Modèle Amélioré (Avec 1x1)}
+    \end{subfigure}
+    
+    \caption{Courbes d’apprentissage pour la baseline MLP et les variantes du modèle CNN.}
+\end{figure}
+Les courbes permettent d’observer la vitesse de convergence, l’écart entraînement/validation et la stabilité du modèle. Un CNN correctement paramétré tend à converger plus proprement qu’un MLP lorsque la durée d’apprentissage est suffisante. L'impact du stride et du padding sur la convergence est également visible.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/mlp_image_baseline_confusion_matrix.png}
+        \caption{MLP}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_default_confusion_matrix.png}
+        \caption{Défaut}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_padding_zero_confusion_matrix.png}
+        \caption{Pad 0}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_stride_two_confusion_matrix.png}
+        \caption{Stride 2}
+    \end{subfigure}
+    
+    \vspace{0.3cm}
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_avg_pool_confusion_matrix.png}
+        \caption{Avg Pool}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_more_filters_confusion_matrix.png}
+        \caption{+Filtres}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/improved_without_1x1_confusion_matrix.png}
+        \caption{Amél. sans 1x1}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.24\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/improved_with_1x1_confusion_matrix.png}
+        \caption{Amél. avec 1x1}
+    \end{subfigure}
+    
+    \caption{Matrices de confusion des différents modèles sur Fashion-MNIST.}
+\end{figure}
+Les confusions observées entre vêtements proches (T-shirt, chemise, pull) montrent que la difficulté de la tâche provient surtout de classes visuellement voisines. La matrice de confusion permet donc une lecture plus fine que l’accuracy globale et montre comment des modèles plus capacitifs (comme ceux avec plus de filtres) parviennent à mieux distinguer ces détails.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_default_feature_maps_layer_1.png}
+        \caption{LeNet (Défaut)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_stride_two_feature_maps_layer_1.png}
+        \caption{LeNet (Stride 2)}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/lenet_more_filters_feature_maps_layer_1.png}
+        \caption{LeNet (Plus de filtres)}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/cnn/improved_with_1x1_feature_maps_layer_1.png}
+        \caption{Amélioré (Avec 1x1)}
+    \end{subfigure}
+    
+    \caption{Cartes de caractéristiques (première couche convolutive) selon les variantes.}
+\end{figure}
+Les cartes de caractéristiques révèlent que les filtres précoces détectent principalement des contours, régions de contraste et textures simples. Cette observation justifie empiriquement la hiérarchie spatiale portée par les CNN. L'effet du stride (réduction drastique de la résolution) et de l'augmentation du nombre de filtres est directement visible sur la richesse des activations extraites.
+
+\section{Analyse critique}
+Les résultats montrent que le CNN est plus cohérent avec la structure des images car il impose un biais de localité et de partage des poids. Le padding trop faible peut dégrader les bords, un stride trop grand fait perdre de l’information spatiale, et le choix du pooling modifie le compromis entre invariance et précision. L’augmentation du nombre de filtres améliore la capacité de représentation mais renchérit le coût de calcul et le risque de surapprentissage. La convolution $1 \times 1$ est utile lorsqu’il faut recombiner des canaux intermédiaires, mais son intérêt réel dépend de la profondeur globale du réseau et du budget d’apprentissage.
+
+\section{Réponse à la question de synthèse}
+\textbf{Pourquoi un CNN est-il plus pertinent qu'un MLP pour une tâche de classification d'images sur un dataset réel, et comment les choix de padding, stride, pooling et profondeur influencent-ils réellement les performances du modèle ?}
+
+\paragraph{Pertinence structurelle du CNN.}
+Un MLP appliqué à une image aplatie en un vecteur $\mathbf{x}\in\mathbb{R}^{784}$
+ignore toute notion de voisinage spatial. Un CNN, en revanche, encode trois biais
+inductifs fondamentaux :
+\begin{enumerate}
+    \item \textbf{localité} : chaque filtre n'opère que sur un champ récepteur
+          restreint de taille $k \times k$ ;
+    \item \textbf{invariance par translation} : le même noyau est appliqué en
+          chaque position via la corrélation croisée 2D ;
+    \item \textbf{compositionnalité hiérarchique} : les couches successives
+          apprennent des motifs de complexité croissante.
+\end{enumerate}
+
+\paragraph{Influence expérimentale des hyperparamètres.}
+\begin{itemize}
+    \item \textbf{Padding nul} réduit la taille spatiale dès la première couche
+          ($28 \to 24$), supprimant l'information de bordure et diminuant la
+          performance d'environ 2\,\% d'accuracy par rapport au padding conservant
+          la dimension.
+    \item \textbf{Stride = 2} réduit brutalement la résolution ($28 \to 14$ dès la
+          première couche), ce qui accélère le calcul mais dégrade la finesse des
+          représentations.
+    \item \textbf{Average pooling vs max pooling} : l'average pooling est moins
+          sélectif et tend à lisser les réponses des filtres.
+    \item \textbf{Plus de filtres} ($32, 64$ au lieu de $16, 32$) augmente la
+          capacité de représentation et améliore l'accuracy.
+    \item \textbf{Convolution $1 \times 1$} recombine les canaux intermédiaires
+          sans modifier la résolution spatiale, jouant le rôle d'un MLP
+          point-par-point sur les vecteurs de caractéristiques.
+\end{itemize}
+En résumé, les performances d'un CNN résultent d'un équilibre entre la
+préservation de la résolution spatiale, la richesse des représentations
+apprises et le budget de calcul disponible. Cet équilibre, absent du MLP,
+est ce qui rend le CNN structurellement adapté aux données visuelles.

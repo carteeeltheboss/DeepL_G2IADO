@@ -1,0 +1,192 @@
+\chapter{Partie I --- MLP et données tabulaires}
+
+\section{Fondements théoriques}
+Un perceptron multicouche est une composition de transformations affines et de fonctions d’activation non linéaires. En PyTorch, l’abstraction centrale est \texttt{nn.Module}, qui encapsule les couches, leurs paramètres, la méthode \texttt{forward} et les mécanismes de sauvegarde via \texttt{state\_dict}. L’écriture \texttt{nn.Sequential} permet de chaîner rapidement des couches dans le cas où le flux de calcul est strictement linéaire ; à l’inverse, une classe héritée de \texttt{nn.Module} offre plus de contrôle lorsque l’on souhaite définir explicitement la propagation avant, nommer les blocs internes ou étendre le comportement du modèle.
+
+Les paramètres sont des tenseurs appris par descente de gradient. Lors de la passe avant, le réseau calcule une sortie à partir des entrées. La fonction de coût compare cette sortie aux cibles. L’appel à \texttt{backward()} déclenche la rétropropagation, qui calcule les gradients de chaque paramètre, puis l’optimiseur met à jour les poids. Le \texttt{state\_dict} contient précisément les poids et biais appris, ce qui permet de sauvegarder et recharger un modèle. Enfin, le \texttt{device} détermine si les calculs sont exécutés sur CPU ou GPU.
+
+\section{Jeu de données}
+Le jeu de données retenu est \textbf{Breast Cancer Wisconsin} via \texttt{scikit-learn} \citep{pedregosa2011scikit}. Il s’agit d’un problème de classification binaire entre tumeurs bénignes et malignes, décrit par 30 variables numériques. Ce choix est pertinent pour un projet de module car le dataset est réel, propre, léger et suffisamment structuré pour illustrer les forces et les limites d’un MLP.
+
+\begin{table}[H]
+    \centering
+    \caption{Résumé du jeu de données tabulaire utilisé.}
+    \safetableinput{\resultspath/tables/mlp/mlp_dataset_summary.tex}
+\end{table}
+L'échantillon est suffisamment modeste pour autoriser des expériences rapides, tout en restant représentatif d'une vraie tâche de classification supervisée.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.65\linewidth]{\resultspath/figures/mlp/mlp_class_distribution.png}
+    \caption{Distribution des classes dans le jeu de données Breast Cancer Wisconsin.}
+\end{figure}
+Le jeu de données présente un léger déséquilibre en faveur de la classe bénigne, ce qui est courant dans les datasets médicaux réels.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.85\linewidth]{\resultspath/figures/mlp/mlp_correlation_heatmap.png}
+    \caption{Matrice de corrélation des 10 premières variables du dataset.}
+\end{figure}
+Plusieurs variables sont fortement corrélées (rayon, périmètre, aire), ce qui explique pourquoi un MLP peut extraire un signal discriminant même avec une architecture simple.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.95\linewidth]{\resultspath/figures/mlp/mlp_feature_boxplots.png}
+    \caption{Distribution de variables clés par classe diagnostic.}
+\end{figure}
+Les boîtes à moustaches confirment que certaines variables (rayon moyen, aire moyenne) séparent efficacement les deux classes, tandis que d'autres (lissage moyen) offrent un pouvoir discriminant plus limité.
+
+\section{Prétraitement}
+Le pipeline de préparation comprend explicitement :
+\begin{itemize}[leftmargin=1.2cm]
+    \item suppression des doublons et des valeurs manquantes si nécessaire ;
+    \item séparation en ensembles d’entraînement, validation et test ;
+    \item normalisation par \texttt{StandardScaler} ajustée uniquement sur l’entraînement ;
+    \item conversion en tenseurs \texttt{float32} pour les entrées et \texttt{long} pour les étiquettes ;
+    \item construction de \texttt{TensorDataset} et \texttt{DataLoader}.
+\end{itemize}
+La normalisation est essentielle car les MLP sont sensibles à l’échelle des variables. Sans cette étape, l’optimisation peut devenir instable et ralentir la convergence.
+
+\section{Implémentation des modèles}
+Deux variantes ont été développées :
+\begin{enumerate}
+    \item un \textbf{MLP séquentiel} défini avec \texttt{nn.Sequential} ;
+    \item un \textbf{MLP personnalisé} défini par une classe héritant de \texttt{nn.Module}.
+\end{enumerate}
+Les deux modèles utilisent deux couches cachées et des activations ReLU. Le projet inspecte aussi les sorties de \texttt{named\_parameters()}, le contenu du \texttt{state\_dict} ainsi que le nombre total de paramètres entraînables. Ces éléments sont exportés dans les journaux du projet afin d’illustrer concrètement le fonctionnement interne de PyTorch.
+
+\section{Initialisation des poids}
+Trois schémas d’initialisation ont été comparés :
+\begin{itemize}[leftmargin=1.2cm]
+    \item initialisation gaussienne ;
+    \item initialisation constante ;
+    \item initialisation de Xavier \citep{glorot2010understanding}.
+\end{itemize}
+Ce choix permet d’étudier l’impact de l’échelle initiale des poids sur la vitesse de convergence et la qualité finale du minimum atteint.
+
+\section{Résultats expérimentaux}
+\begin{table}[H]
+    \centering
+    \caption{Comparaison des variantes de MLP et des initialisations.}
+    \safetableinput{\resultspath/tables/mlp/mlp_comparaison_modeles.tex}
+\end{table}
+Le tableau montre que les performances atteignent un niveau élevé sur ce dataset. Dans les exécutions réalisées, le score F1 pondéré du meilleur MLP est proche de 0,94, ce qui confirme qu’un réseau dense bien régularisé et correctement normalisé peut traiter efficacement une tâche tabulaire réaliste.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.78\linewidth]{\resultspath/figures/mlp/mlp_f1_comparison.png}
+    \caption{Comparaison visuelle des scores F1 des différentes configurations MLP.}
+\end{figure}
+Cette figure montre que l’écart entre les architectures reste faible sur un problème tabulaire relativement simple. L’effet de l’initialisation existe surtout au niveau de la dynamique de convergence plus qu’au niveau du score final.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_sequential_constant_curves.png}
+        \caption{Sequential - Constant}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_constant_curves.png}
+        \caption{Custom - Constant}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_sequential_gaussian_curves.png}
+        \caption{Sequential - Gaussien}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_gaussian_curves.png}
+        \caption{Custom - Gaussien}
+    \end{subfigure}
+    
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_sequential_xavier_curves.png}
+        \caption{Sequential - Xavier}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_xavier_curves.png}
+        \caption{Custom - Xavier}
+    \end{subfigure}
+    
+    \caption{Courbes d'apprentissage pour différentes architectures et initialisations du MLP.}
+\end{figure}
+L'initialisation constante souffre d'une symétrie initiale qui peut ralentir la convergence, tandis que l'initialisation de Xavier ou gaussienne permet au modèle de démarrer avec une variance adaptée, facilitant l'optimisation. Dans tous les cas viables, les courbes indiquent une convergence rapide, peu de surapprentissage et une bonne stabilité numérique, ce qui est cohérent avec la taille modérée du dataset et la faible profondeur du modèle.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_constant_confusion_matrix.png}
+        \caption{Constant}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_gaussian_confusion_matrix.png}
+        \caption{Gaussien}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/mlp/mlp_custom_xavier_confusion_matrix.png}
+        \caption{Xavier}
+    \end{subfigure}
+    
+    \caption{Matrices de confusion du MLP (variante personnalisée) selon l'initialisation.}
+\end{figure}
+Les matrices de confusion mettent en évidence une bonne séparation entre classes bénigne et maligne, avec un nombre réduit d’erreurs. L'initialisation de Xavier tend à offrir le meilleur équilibre, réduisant ainsi les faux négatifs. Dans un contexte médical, cette lecture reste toutefois insuffisante sans analyse plus fine des faux négatifs et du coût métier associé.
+
+\section{Analyse critique}
+Le MLP est pertinent ici pour plusieurs raisons. D’abord, les variables sont déjà des descripteurs numériques compacts ; le modèle n’a donc pas à découvrir une structure spatiale ou temporelle cachée. Ensuite, la classification binaire sur un espace de caractéristiques normalisé convient bien à une architecture dense. Enfin, la taille du dataset rend le coût de calcul très faible.
+
+Ses limites restent néanmoins nettes. Un MLP :
+\begin{itemize}[leftmargin=1.2cm]
+    \item ne modélise pas explicitement des interactions structurelles particulières entre variables ;
+    \item dépend fortement de la qualité du prétraitement et de l’échelle des entrées ;
+    \item n’exploite aucun biais inductif spécifique comme la localité ou l’ordre ;
+    \item peut être dominé, sur certains jeux tabulaires, par des méthodes d’arbres gradient boosting non étudiées ici.
+\end{itemize}
+
+\section{Réponse à la question de synthèse}
+\textbf{Dans quelle mesure un MLP bien paramétré constitue-t-il une solution pertinente pour la classification tabulaire sur un dataset réel, et quelles sont ses principales limites au regard de la structure statistique des données étudiées ?}
+
+\paragraph{Fondement théorique.}
+Un MLP constitue un approximateur universel~\citep{goodfellow2016deep} : pour toute
+fonction continue $f : \mathbb{R}^d \to \mathbb{R}^K$ et tout $\varepsilon > 0$,
+il existe un réseau à une couche cachée suffisamment large tel que
+$\sup_{\mathbf{x}} \|g(\mathbf{x}) - f(\mathbf{x})\| < \varepsilon$.
+En classification, il apprend une frontière de décision non linéaire dans l'espace
+des caractéristiques $\mathbb{R}^{30}$ en minimisant l'entropie croisée :
+\[
+    \mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N}\sum_{c=1}^{C}
+    y_{i,c}\,\log\hat{y}_{i,c}\,,
+\]
+où $C = 2$ pour la classification binaire.
+
+\paragraph{Choix méthodologiques.}
+La normalisation par \texttt{StandardScaler} ajustée uniquement sur l'entraînement
+ramène chaque variable à une distribution centrée réduite, ce qui est crucial car
+les 30 variables du Breast Cancer Wisconsin couvrent des échelles très différentes
+(rayons en $\mu$m, textures sans unité, compacité adimensionnelle). L'initialisation
+de Xavier, retenue comme référence, calibre la variance des poids initiaux
+proportionnellement à $1/\sqrt{n_{\text{in}}}$, assurant une propagation stable du
+signal et des gradients dès le début de l'entraînement~\citep{glorot2010understanding}.
+
+\paragraph{Résultats expérimentaux.}
+Les six configurations testées atteignent un F1 pondéré compris entre 0,91 et 0,96
+sur l'ensemble de test, confirmant l'adéquation du MLP à cette tâche.
+L'initialisation de Xavier domine légèrement l'initialisation constante, qui souffre
+d'une symétrie initiale ralentissant la convergence. La matrice de confusion révèle
+un nombre réduit de faux négatifs --- point critique dans un contexte de dépistage
+médical.
+
+\paragraph{Limites structurelles.}
+Le MLP ne possède aucun biais inductif spatial, ordinal ou hiérarchique. Il est
+agnostique vis-à-vis de la géométrie des données : chaque entrée est un vecteur
+plat de $\mathbb{R}^{30}$, et toute permutation des variables laisserait
+le modèle invariant si l'on permutait les poids de façon cohérente.
+Par conséquent, le MLP est pertinent uniquement lorsque les caractéristiques sont
+déjà des descripteurs numériques compacts et informatifs. Dès lors que les données
+présentent une structure spatiale (images), temporelle (séquences) ou fortement
+hétérogène (mix de types), le MLP nécessite un pré-traitement lourd ou se retrouve
+surpassé par des architectures exploitant ces structures.

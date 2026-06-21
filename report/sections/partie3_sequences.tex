@@ -1,0 +1,150 @@
+\chapter{Partie III --- RNN, LSTM, GRU et Seq2Seq}
+
+\section{Objectif probabiliste d’un modèle de langage}
+Un modèle de langage attribue une probabilité à une séquence de tokens $x_{1:T}$ :
+\[
+P(x_{1:T}) = \prod_{t=1}^{T} P(x_t \mid x_{<t}).
+\]
+Cette factorisation découle de la règle de chaîne. Le modèle apprend donc à prédire le prochain token sachant le contexte passé. En pratique, la fonction de coût utilisée est l’entropie croisée, et l’indicateur le plus lisible pour juger la qualité d’un modèle de langage reste la \textbf{perplexité}.
+
+\section{Perplexité et interprétation}
+La perplexité est l’exponentielle de la perte moyenne par token. Plus elle est faible, plus le modèle assigne une probabilité élevée aux séquences observées. Une perplexité de 10 signifie intuitivement qu’à chaque étape le modèle hésite en moyenne entre environ 10 choix plausibles.
+
+\section{Préparation des données textuelles}
+Le projet utilise un sous-corpus \textbf{anglais--français} réel issu de \texttt{fra-eng} via ManyThings/Tatoeba \citep{manythings2026}. Pour garder une exécution raisonnable sur machine standard, le corpus est filtré sur des phrases courtes et des structures fréquentes. Le pipeline de préparation comprend :
+\begin{itemize}[leftmargin=1.2cm]
+    \item normalisation et tokenisation ;
+    \item construction de vocabulaires source et cible ;
+    \item ajout des tokens spéciaux \texttt{<pad>}, \texttt{<sos>}, \texttt{<eos>} et \texttt{<unk>} ;
+    \item padding dynamique dans les mini-lots ;
+    \item masquage implicite via l’ignore index du \texttt{CrossEntropyLoss}.
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption{Résumé du sous-corpus utilisé pour la partie séquentielle.}
+    \safetableinput{\resultspath/tables/sequence/sequence_dataset_summary.tex}
+\end{table}
+La taille retenue n’a pas vocation à rivaliser avec des corpus industriels ; elle est choisie pour rendre visibles les phénomènes d’apprentissage tout en restant exécutable localement.
+
+\section{RNN simple, LSTM et GRU}
+Trois cellules récurrentes ont été comparées sur une tâche de modélisation de langage :
+\begin{itemize}[leftmargin=1.2cm]
+    \item le \textbf{RNN simple}, compact mais sensible à l’évanouissement des gradients ;
+    \item le \textbf{LSTM}, qui introduit des portes de contrôle de mémoire \citep{hochreiter1997long} ;
+    \item le \textbf{GRU}, variante plus légère du LSTM \citep{cho2014learning}.
+\end{itemize}
+Le \textbf{BPTT} (Backpropagation Through Time) consiste à rétropropager l’erreur à travers les états cachés le long de la séquence. Ce mécanisme rend possible l’apprentissage de dépendances temporelles, mais il accentue les problèmes d’explosion ou de disparition des gradients.
+
+\section{Effet du gradient clipping}
+Pour stabiliser l’entraînement, le projet compare une configuration avec clipping et une autre sans clipping effectif. Le clipping borne la norme du gradient avant la mise à jour des poids. Il agit donc comme une mesure de stabilité plutôt que comme une amélioration directe garantie du score.
+
+\section{Système Seq2Seq}
+Le système de traduction repose sur un encodeur GRU et un décodeur GRU \citep{sutskever2014sequence}. L’encodeur compresse la phrase source en un état caché, que le décodeur exploite ensuite pour générer la séquence cible. Le \emph{teacher forcing} consiste à réinjecter le vrai token précédent pendant l’apprentissage avec une certaine probabilité afin d’accélérer la convergence.
+
+\section{Décodage glouton et beam search}
+Deux stratégies de décodage ont été implémentées :
+\begin{itemize}[leftmargin=1.2cm]
+    \item \textbf{greedy decoding} : on choisit à chaque étape le token le plus probable ;
+    \item \textbf{beam search} : on conserve plusieurs hypothèses partielles et on optimise une séquence globale plus cohérente.
+\end{itemize}
+
+\section{Résultats sur la modélisation de langage}
+\begin{table}[H]
+    \centering
+    \caption{Comparaison des modèles récurrents par perte et perplexité sur l’ensemble de test.}
+    \safetableinput{\resultspath/tables/sequence/sequence_language_models_comparison.tex}
+\end{table}
+Dans les exécutions réalisées, le GRU tend à obtenir la meilleure perplexité, suivi du RNN simple puis du LSTM. Ce résultat ne signifie pas que le GRU est universellement supérieur, mais plutôt qu’il offre ici un bon compromis entre capacité, stabilité et simplicité.
+Dans la campagne finale, la meilleure perplexité de test est voisine de 13,2 pour le GRU, ce qui confirme cette tendance.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.75\linewidth]{\resultspath/figures/sequence/sequence_language_model_perplexity.png}
+    \caption{Comparaison des perplexités des modèles de langage récurrents.}
+\end{figure}
+La figure montre clairement les écarts de perplexité. Sur un corpus compact, une architecture plus simple peut parfois être aussi efficace qu’une architecture plus sophistiquée, voire davantage lorsqu’elle s’optimise plus facilement.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/sequence/lm_rnn_curves.png}
+        \caption{RNN Simple}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/sequence/lm_lstm_curves.png}
+        \caption{LSTM}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.32\textwidth}
+        \safegraphic[width=\textwidth]{\resultspath/figures/sequence/lm_gru_curves.png}
+        \caption{GRU}
+    \end{subfigure}
+    
+    \caption{Courbes d'apprentissage pour les différents modèles de langage récurrents.}
+\end{figure}
+Les courbes de perte d'entraînement et de validation mettent en évidence la capacité de chaque architecture à s'ajuster aux données. On observe que le GRU et le LSTM convergent de manière plus stable comparé au RNN simple, dont l'apprentissage est plus sensible aux problèmes d'évanouissement du gradient sur de longues séquences.
+
+\begin{table}[H]
+    \centering
+    \caption{Effet du gradient clipping sur un modèle de langage GRU.}
+    \safetableinput{\resultspath/tables/sequence/sequence_gradient_clipping.tex}
+\end{table}
+Le clipping n’améliore pas nécessairement de façon spectaculaire la perplexité finale, mais il réduit les risques d’instabilité et limite les pics de gradients pendant l’apprentissage.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.75\linewidth]{\resultspath/figures/sequence/sequence_gradient_norms.png}
+    \caption{Norme moyenne des gradients avec et sans clipping.}
+\end{figure}
+Cette figure confirme le rôle régulateur du clipping. Elle donne une lecture quantitative du phénomène de stabilité, au-delà d’une simple intuition théorique.
+
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.85\linewidth]{\resultspath/figures/sequence/sequence_clipping_comparison_curves.png}
+    \caption{Courbes de perte de validation superposées : avec vs sans gradient clipping.}
+\end{figure}
+La superposition des courbes de validation permet de constater visuellement l'effet du clipping sur la dynamique d'apprentissage. L'entraînement avec clipping tend à être plus stable, avec des oscillations de perte plus contenues.
+
+\section{Résultats sur le Seq2Seq}
+\begin{figure}[H]
+    \centering
+    \safegraphic[width=0.85\linewidth]{\resultspath/figures/sequence/seq2seq_curves.png}
+    \caption{Courbes d’apprentissage du modèle Seq2Seq.}
+\end{figure}
+Les courbes du modèle de traduction montrent que le système apprend, mais dans un cadre volontairement compact. On reste loin d’un système de traduction de production, ce qui est normal au regard de la taille du corpus, de l’absence d’attention et du budget de calcul retenu.
+
+\begin{table}[H]
+    \centering
+    \caption{Scores BLEU du système Seq2Seq selon la stratégie de décodage.}
+    \safetableinput{\resultspath/tables/sequence/sequence_seq2seq_bleu.tex}
+\end{table}
+Le beam search améliore généralement la cohérence globale des sorties par rapport au décodage glouton, même lorsque le gain absolu en BLEU reste modeste.
+Dans les résultats finaux du projet, le beam search dépasse le décodage glouton avec un BLEU d’environ 0,165 contre 0,148, ce qui reste modeste mais cohérent avec la taille du corpus et la simplicité volontaire du modèle.
+
+\begin{table}[H]
+    \centering
+    \caption{Exemples qualitatifs de traductions générées.}
+    \resizebox{\textwidth}{!}{\safetableinput{\resultspath/tables/sequence/sequence_translation_examples.tex}}
+\end{table}
+L’analyse qualitative reste indispensable. Une valeur de BLEU seule ne suffit pas à diagnostiquer les omissions, répétitions ou simplifications excessives du décodeur.
+
+\section{Analyse critique}
+Les architectures récurrentes sont efficaces pour traiter l’ordre et la dépendance temporelle. Le RNN simple constitue une base pédagogique, mais il peine à conserver un contexte long. Le LSTM et le GRU corrigent partiellement ce problème grâce à leurs mécanismes de portes, au prix d’une complexité supérieure. Le passage au schéma encodeur--décodeur est justifié dès qu’il faut transformer une séquence source en une séquence cible de longueur variable, comme en traduction. Néanmoins, sur un petit corpus sans mécanisme d’attention, la qualité de génération reste limitée : c’est une limite structurante, non un simple défaut d’implémentation.
+
+\section{Réponse à la question de synthèse}
+\textbf{Dans quelle mesure les architectures récurrentes permettent-elles de modéliser efficacement une séquence réelle, et comment justifier le passage d’un RNN simple vers un LSTM/GRU puis vers un schéma encodeur--décodeur pour une tâche de génération ou de traduction ?}
+
+Les architectures récurrentes modélisent efficacement une séquence réelle dès lors qu'il est nécessaire d'exploiter l'ordre et le contexte. Le RNN simple introduit déjà cette dépendance temporelle, mais sa mémoire est fragile. Le LSTM et le GRU améliorent la conservation de l'information utile et stabilisent l'apprentissage de dépendances plus longues. Le passage au schéma encodeur--décodeur est ensuite naturel lorsqu'on ne veut plus seulement prédire le token suivant, mais transformer une séquence entière en une autre séquence, comme en génération conditionnelle ou en traduction. Ce passage correspond donc à une augmentation progressive du biais inductif nécessaire pour représenter correctement la structure du problème.
+
+Plus formellement, un modèle de langage autorégressif factorise la distribution conjointe :
+\[
+    P(x_{1:T}) = \prod_{t=1}^{T} P(x_t \mid x_{<t}).
+\]
+La perplexité $\mathrm{PPL} = \exp\!\bigl(-\frac{1}{T}\sum_{t}\log P(x_t \mid x_{<t})\bigr)$
+quantifie l'incertitude moyenne du modèle.
+
+Le RNN simple met à jour un état caché $\mathbf{h}_t = \sigma(\mathbf{W}_h \mathbf{h}_{t-1} + \mathbf{W}_x \mathbf{x}_t + \mathbf{b})$, mais la rétropropagation à travers le temps (BPTT) implique un produit de Jacobiens $\prod_{k=t}^{T} \frac{\partial \mathbf{h}_{k}}{\partial \mathbf{h}_{k-1}}$ qui conduit à l'évanouissement ou l'explosion des gradients. Le LSTM corrige ce problème via une cellule mémoire à portes, et le GRU offre un compromis similaire avec moins de paramètres~\citep{cho2014learning}. Expérimentalement, le GRU atteint la meilleure perplexité ($\approx 13{,}2$) sur notre corpus compact.
+
+Pour la traduction, le schéma encodeur--décodeur~\citep{sutskever2014sequence} compresse la source en un vecteur contextuel $\mathbf{h}_S$ puis génère la cible de manière autorégressive. Le beam search ($B = 3$) améliore la cohérence globale par rapport au décodage glouton, avec un BLEU de $\approx 0{,}165$ contre $0{,}148$. Les performances restent limitées par l'absence d'attention, qui force le décodeur à s'appuyer exclusivement sur le vecteur contextuel final.

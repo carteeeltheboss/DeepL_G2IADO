@@ -1,0 +1,15 @@
+\chapter{Limites du travail}
+
+Ce projet remplit les objectifs pédagogiques et expérimentaux du module, mais plusieurs limites doivent être explicitées.
+
+\begin{itemize}[leftmargin=1.2cm]
+    \item Les budgets d’entraînement ont été volontairement limités pour préserver l’exécutabilité sur ordinateur portable.
+    \item La partie tabulaire ne compare pas le MLP à des modèles non neuronaux souvent très compétitifs sur ce type de données.
+    \item La partie vision reste sur Fashion-MNIST, dataset utile pédagogiquement mais modeste au regard de problèmes visuels modernes.
+    \item La partie séquentielle repose sur un sous-corpus filtré, ce qui simplifie la tâche mais limite la couverture linguistique.
+    \item Le système Seq2Seq n’intègre ni attention explicite, ni Transformer, ni embeddings pré-entraînés.
+    \item Les résultats séquentiels doivent donc être interprétés comme une démonstration robuste de pipeline et de principes, non comme un système de traduction à l’état de l’art.
+\end{itemize}
+
+Ces limites n’invalident pas le projet ; elles en fixent simplement le périmètre scientifique et computationnel.
+

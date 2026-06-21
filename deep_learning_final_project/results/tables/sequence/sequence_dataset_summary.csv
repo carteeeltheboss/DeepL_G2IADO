@@ -1,0 +1,4 @@
+split,paires,vocab_source,vocab_cible
+entraînement,4800,1288,1516
+validation,600,1288,1516
+test,600,1288,1516

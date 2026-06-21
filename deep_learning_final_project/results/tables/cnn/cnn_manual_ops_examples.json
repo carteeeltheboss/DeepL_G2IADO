@@ -1,0 +1,79 @@
+{
+  "cross_correlation_manual": [
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ],
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ],
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ]
+  ],
+  "cross_correlation_torch": [
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ],
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ],
+    [
+      -2.0,
+      -2.0,
+      -2.0
+    ]
+  ],
+  "max_pool_manual": [
+    [
+      2.0,
+      4.0
+    ],
+    [
+      4.0,
+      6.0
+    ]
+  ],
+  "max_pool_torch": [
+    [
+      2.0,
+      4.0
+    ],
+    [
+      4.0,
+      6.0
+    ]
+  ],
+  "avg_pool_manual": [
+    [
+      1.0,
+      3.0
+    ],
+    [
+      3.0,
+      5.0
+    ]
+  ],
+  "avg_pool_torch": [
+    [
+      1.0,
+      3.0
+    ],
+    [
+      3.0,
+      5.0
+    ]
+  ],
+  "conv_output_28_kernel5_pad2_stride1": 28,
+  "conv_output_28_kernel5_pad0_stride1": 24,
+  "pool_output_28_kernel2_stride2": 14
+}

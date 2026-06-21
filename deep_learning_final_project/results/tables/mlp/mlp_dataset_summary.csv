@@ -1,0 +1,5 @@
+split,n_samples,n_features
+entraînement,397,30
+validation,86,30
+test,86,30
+total,569,30

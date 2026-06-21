@@ -1,0 +1,98 @@
+{
+  "part": "sequence",
+  "quick": false,
+  "device": "cpu",
+  "device_description": "CPU",
+  "config": {
+    "seed": 42,
+    "paths": {
+      "data_root": "data",
+      "results_root": "results",
+      "figures_dir": "results/figures",
+      "tables_dir": "results/tables",
+      "models_dir": "results/saved_models",
+      "logs_dir": "results/logs"
+    },
+    "mlp": {
+      "dataset_name": "breast_cancer_wisconsin",
+      "test_size": 0.15,
+      "val_size": 0.15,
+      "batch_size": 32,
+      "num_workers": 0,
+      "hidden_dims": [
+        64,
+        32
+      ],
+      "dropout": 0.15,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "epochs": 30,
+      "patience": 6,
+      "gaussian_std": 0.02,
+      "constant_value": 0.05,
+      "initializations": [
+        "gaussian",
+        "constant",
+        "xavier"
+      ]
+    },
+    "cnn": {
+      "dataset_name": "fashion_mnist",
+      "batch_size": 64,
+      "num_workers": 0,
+      "train_subset": 12000,
+      "val_subset": 2000,
+      "test_subset": 3000,
+      "mlp_hidden_dims": [
+        256,
+        128
+      ],
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "epochs": 6,
+      "patience": 3
+    },
+    "sequence": {
+      "dataset_name": "fra_eng_manythings",
+      "max_pairs": 6000,
+      "min_freq": 2,
+      "max_len": 10,
+      "batch_size": 64,
+      "embedding_dim": 128,
+      "hidden_dim": 256,
+      "dropout": 0.1,
+      "lr": 0.001,
+      "weight_decay": 0.0,
+      "lm_epochs": 10,
+      "seq2seq_epochs": 12,
+      "patience": 3,
+      "teacher_forcing_ratio": 0.6,
+      "clip_value": 1.0,
+      "no_clip_value": 1000000.0,
+      "beam_width": 3,
+      "max_decode_len": 14,
+      "translation_prefixes": [
+        "i am",
+        "i m",
+        "he is",
+        "he s",
+        "she is",
+        "she s",
+        "you are",
+        "you re",
+        "we are",
+        "we re",
+        "they are",
+        "they re",
+        "are you",
+        "is he",
+        "is she",
+        "tom is",
+        "tom s",
+        "can you",
+        "can i",
+        "do you"
+      ]
+    }
+  }
+}

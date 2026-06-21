@@ -1,0 +1,4 @@
+calcul,valeur
+"Conv 28, k=5, p=2, s=1",28
+"Conv 28, k=5, p=0, s=1",24
+"Pool 28, k=2, s=2",14

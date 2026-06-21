@@ -1,0 +1,85 @@
+\mychapter{Partie I : Perceptron Multicouche (MLP)}{Partie I : Perceptron Multicouche (MLP)}
+
+\section{Contexte et jeu de données}
+\slidepurpose{Mettre en œuvre un MLP pour des données tabulaires et maîtriser l'inspection des poids.}{Partie 1 / Section 1}
+
+Cette première partie se concentre sur l'analyse de données tabulaires pour la prédiction de la dépression à l'aide du \emph{Depression Professional Dataset}. Ce jeu de données, composé de 2054 observations et 11 variables, contient des informations sociodémographiques et professionnelles telles que l'âge, le genre, la pression au travail, la satisfaction professionnelle, et les habitudes de sommeil. L'objectif est de prédire la variable cible binaire \texttt{Depression} (Oui/Non).
+
+Les données ont été nettoyées par suppression des valeurs manquantes, puis les variables catégorielles ont été transformées via un \texttt{LabelEncoder}. Le jeu de données a été scindé en un ensemble de test (20\,\%) et un ensemble d'entraînement/validation (80\,\%, lui-même divisé en 80/20). Enfin, une normalisation (\texttt{StandardScaler}) a été appliquée.
+
+\section{Architectures MLP}
+
+Deux approches de définition du perceptron multicouche ont été explorées.
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\begin{block}{Approche \texttt{nn.Sequential}}
+Un empilement séquentiel direct :
+\begin{itemize}
+    \item \textbf{Entrée} : 10 caractéristiques
+    \item \textbf{Couche cachée 1} : 64 neurones, ReLU
+    \item \textbf{Couche cachée 2} : 32 neurones, ReLU
+    \item \textbf{Sortie} : 2 neurones (classification)
+\end{itemize}
+\end{block}
+\end{column}
+\begin{column}{0.48\textwidth}
+\begin{block}{Approche Orientée Objet (\texttt{nn.Module})}
+Une classe personnalisée \texttt{DepressionMLP} permettant un contrôle plus fin lors du passage avant (\emph{forward pass}). L'architecture interne reste identique.
+\end{block}
+\end{column}
+\end{columns}
+
+L'inspection des poids via \texttt{state\_dict()} a permis de vérifier l'initialisation de la couche \texttt{fc1.weight} (moyenne : $-0.0062$, écart-type inhérent à l'initialisation par défaut de PyTorch).
+
+\section{Impact de l'initialisation des poids}
+
+Nous avons comparé trois stratégies d'initialisation pour évaluer leur impact sur la convergence du modèle (optimiseur Adam, taux d'apprentissage de 0.01, 50 époques).
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l c}
+\rowcolor{TableHeader} \tblhead{Stratégie d'initialisation} & \tblhead{Perte (Loss) finale (Époque 50)} \\
+\rowcolor{TableAlt} \textbf{Xavier (Glorot)} & 0.0114 \\
+\textbf{Gaussienne standard} ($\mu=0, \sigma=0.01$) & 0.0902 \\
+\rowcolor{TableAlt} \textbf{Constante} (poids $= 1.0$) & 1.4322 \\
+\end{tabular}
+\end{center}
+
+\begin{alertblock}{Observation critique}
+L'initialisation constante échoue à briser la symétrie des neurones, empêchant l'apprentissage effectif. L'initialisation de Xavier s'avère la plus performante car elle maintient la variance des activations constante à travers les couches, particulièrement adaptée aux fonctions \texttt{ReLU}.
+\end{alertblock}
+
+\solutionfigure{figures/fig_p1_loss_init.png}{Comparaison de la convergence selon la stratégie d'initialisation}
+
+\section{Évaluation des performances}
+
+Le modèle optimal a été sauvegardé puis rechargé pour évaluation sur le jeu de test.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{l c}
+\rowcolor{TableHeader} \tblhead{Métrique} & \tblhead{Score} \\
+\rowcolor{TableAlt} \textbf{Accuracy} (Précision globale) & 97.81\,\% \\
+\textbf{Précision} (Vrais Positifs / Prédits Positifs) & 88.10\,\% \\
+\rowcolor{TableAlt} \textbf{Recall} (Vrais Positifs / Total Positifs réels) & 90.24\,\% \\
+\textbf{F1-Score} (Moyenne harmonique) & 89.16\,\% \\
+\end{tabular}
+\end{center}
+
+\begin{columns}
+\begin{column}{0.48\textwidth}
+\solutionfigure{figures/fig_p1_confusion_matrix_2.png}{Matrice de confusion}
+\end{column}
+\begin{column}{0.48\textwidth}
+\solutionfigure{figures/fig_p1_metrics_barplot.png}{Métriques de performance}
+\end{column}
+\end{columns}
+
+\section{Discussion : Pertinence et limites du MLP}
+
+\begin{block}{Question de Synthèse I : Pertinence et limites du MLP sur les données tabulaires}
+\textbf{Analyse de l'étudiante :} Le Perceptron Multicouche (MLP) est l'architecture de référence pour les données tabulaires car ces dernières ne possèdent pas de relations topologiques ou spatiales a priori (contrairement aux images). La connectivité totale (\emph{fully connected}) permet de capter des combinaisons complexes de caractéristiques non linéaires à l'aide de fonctions d'activation appropriées.
+
+Cependant, ses limites majeures incluent la sensibilité extrême au choix de l'échelle des variables (nécessité absolue d'une normalisation) et le risque élevé de surapprentissage (\emph{overfitting}) lorsque le nombre de variables et de couches augmente, en raison de l'explosion du nombre de paramètres apprenables.
+\end{block}
